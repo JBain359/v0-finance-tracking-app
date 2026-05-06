@@ -111,14 +111,32 @@ export async function POST(request: NextRequest) {
     // Get file from blob storage
     const result = await get(statement.blob_pathname, { access: 'private' })
     
-    if (!result) {
+    if (!result || !result.stream) {
       return NextResponse.json({ error: 'File not found in storage' }, { status: 404 })
     }
 
     let transactions: ParsedTransaction[] = []
 
     if (statement.file_type === 'csv') {
-      const content = await result.blob.text()
+      // Read stream to text
+      const reader = result.stream.getReader()
+      const chunks: Uint8Array[] = []
+      
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        chunks.push(value)
+      }
+      
+      const content = new TextDecoder().decode(
+        chunks.reduce((acc, chunk) => {
+          const newArr = new Uint8Array(acc.length + chunk.length)
+          newArr.set(acc)
+          newArr.set(chunk, acc.length)
+          return newArr
+        }, new Uint8Array(0))
+      )
+      
       transactions = parseCSV(content)
     } else {
       // For PDF, we'd need pdf-parse which requires more setup
