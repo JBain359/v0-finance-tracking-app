@@ -4,131 +4,137 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.98 0.005 240);
-  --foreground: oklch(0.15 0.02 250);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 250);
-  --primary: oklch(0.55 0.2 250);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.01 240);
-  --secondary-foreground: oklch(0.25 0.02 250);
-  --muted: oklch(0.95 0.01 240);
-  --muted-foreground: oklch(0.5 0.02 250);
-  --accent: oklch(0.92 0.03 160);
-  --accent-foreground: oklch(0.2 0.05 160);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.01 240);
-  --input: oklch(0.9 0.01 240);
-  --ring: oklch(0.55 0.2 250);
-  --chart-1: oklch(0.55 0.2 250);
-  --chart-2: oklch(0.65 0.18 160);
-  --chart-3: oklch(0.7 0.15 40);
-  --chart-4: oklch(0.6 0.2 300);
-  --chart-5: oklch(0.65 0.15 200);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.99 0.005 240);
-  --sidebar-foreground: oklch(0.15 0.02 250);
-  --sidebar-primary: oklch(0.55 0.2 250);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.95 0.02 250);
-  --sidebar-accent-foreground: oklch(0.2 0.02 250);
-  --sidebar-border: oklch(0.92 0.01 240);
-  --sidebar-ring: oklch(0.55 0.2 250);
+  /* Framer Project Colors - Light Mode */
+  --background: 247 248 248; /* Grey 4 - rgb(247, 248, 248) */
+  --foreground: 34 36 42; /* Black - rgb(34, 36, 42) */
+  --card: 255 255 255; /* White - rgb(255, 255, 255) */
+  --card-foreground: 34 36 42; /* Black */
+  --popover: 255 255 255; /* White */
+  --popover-foreground: 34 36 42; /* Black */
+  --primary: 227 255 143; /* Primary - rgb(227, 255, 143) lime green - USE ONLY AS BACKGROUND */
+  --primary-foreground: 34 36 42; /* Black text/icons on primary background */
+  --primary-stroke: 65 87 98; /* Grey 1 - dark stroke/border for primary */
+  --secondary: 242 243 243; /* Grey 3.5 - rgb(242, 243, 243) */
+  --secondary-foreground: 34 36 42; /* Black */
+  --muted: 229 230 230; /* Grey 3 - rgb(229, 230, 230) */
+  --muted-foreground: 65 87 98; /* Grey 1 - rgb(65, 87, 98) */
+  --accent: 37 197 250; /* Blue - rgb(37, 197, 250) */
+  --accent-foreground: 34 36 42; /* Black */
+  --destructive: 238 68 68; /* Error - rgb(238, 68, 68) */
+  --destructive-foreground: 255 255 255; /* White */
+  --border: 229 230 230; /* Grey 3 */
+  --input: 229 230 230; /* Grey 3 */
+  --ring: 34 36 42; /* Black ring for focus states */
+  --chart-1: 227 255 143; /* Primary */
+  --chart-2: 37 197 250; /* Blue */
+  --chart-3: 55 149 91; /* Success */
+  --chart-4: 179 189 189; /* Grey 2 */
+  --chart-5: 65 87 98; /* Grey 1 */
+  --radius: 0.5rem; /* 8px - Framer's rounded corners */
+  --sidebar: 255 255 255; /* White */
+  --sidebar-foreground: 34 36 42; /* Black */
+  --sidebar-primary: 227 255 143; /* Primary */
+  --sidebar-primary-foreground: 34 36 42; /* Black */
+  --sidebar-accent: 242 243 243; /* Grey 3.5 */
+  --sidebar-accent-foreground: 34 36 42; /* Black */
+  --sidebar-border: 229 230 230; /* Grey 3 */
+  --sidebar-ring: 227 255 143; /* Primary */
 
-  /* Custom finance colors */
-  --success: oklch(0.65 0.18 145);
-  --success-foreground: oklch(0.99 0 0);
-  --warning: oklch(0.75 0.15 85);
-  --warning-foreground: oklch(0.25 0.05 85);
+  /* Custom finance colors from Framer */
+  --success: 55 149 91; /* Success - rgb(55, 149, 91) */
+  --success-foreground: 255 255 255; /* White */
+  --warning: 238 68 68; /* Using error color for warning */
+  --warning-foreground: 255 255 255; /* White */
 }
 
 .dark {
-  --background: oklch(0.13 0.015 250);
-  --foreground: oklch(0.95 0.01 240);
-  --card: oklch(0.17 0.015 250);
-  --card-foreground: oklch(0.95 0.01 240);
-  --popover: oklch(0.17 0.015 250);
-  --popover-foreground: oklch(0.95 0.01 240);
-  --primary: oklch(0.65 0.2 250);
-  --primary-foreground: oklch(0.1 0.02 250);
-  --secondary: oklch(0.22 0.015 250);
-  --secondary-foreground: oklch(0.95 0.01 240);
-  --muted: oklch(0.22 0.015 250);
-  --muted-foreground: oklch(0.65 0.02 250);
-  --accent: oklch(0.3 0.05 160);
-  --accent-foreground: oklch(0.9 0.03 160);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.25 0.015 250);
-  --input: oklch(0.25 0.015 250);
-  --ring: oklch(0.65 0.2 250);
-  --chart-1: oklch(0.65 0.2 250);
-  --chart-2: oklch(0.7 0.18 160);
-  --chart-3: oklch(0.75 0.15 40);
-  --chart-4: oklch(0.65 0.2 300);
-  --chart-5: oklch(0.7 0.15 200);
-  --sidebar: oklch(0.15 0.015 250);
-  --sidebar-foreground: oklch(0.95 0.01 240);
-  --sidebar-primary: oklch(0.65 0.2 250);
-  --sidebar-primary-foreground: oklch(0.1 0.02 250);
-  --sidebar-accent: oklch(0.22 0.02 250);
-  --sidebar-accent-foreground: oklch(0.95 0.01 240);
-  --sidebar-border: oklch(0.25 0.015 250);
-  --sidebar-ring: oklch(0.65 0.2 250);
+  /* Framer Project Colors - Dark Mode */
+  --background: 31 34 35; /* Black dark - rgb(31, 34, 35) */
+  --foreground: 255 255 255; /* White */
+  --card: 34 36 42; /* Black - rgb(34, 36, 42) */
+  --card-foreground: 255 255 255; /* White */
+  --popover: 34 36 42; /* Black */
+  --popover-foreground: 255 255 255; /* White */
+  --primary: 227 255 143; /* Primary - same in dark - USE ONLY AS BACKGROUND */
+  --primary-foreground: 34 36 42; /* Black text/icons on primary background */
+  --primary-stroke: 34 36 42; /* Black - dark stroke/border for primary */
+  --secondary: 65 87 98; /* Grey 1 - rgb(65, 87, 98) */
+  --secondary-foreground: 255 255 255; /* White */
+  --muted: 65 87 98; /* Grey 1 */
+  --muted-foreground: 179 189 189; /* Grey 2 - rgb(179, 189, 189) */
+  --accent: 37 197 250; /* Blue - same in dark */
+  --accent-foreground: 34 36 42; /* Black */
+  --destructive: 238 68 68; /* Error - same in dark */
+  --destructive-foreground: 255 255 255; /* White */
+  --border: 65 87 98; /* Grey 1 */
+  --input: 65 87 98; /* Grey 1 */
+  --ring: 255 255 255; /* White ring for focus states in dark mode */
+  --chart-1: 227 255 143; /* Primary */
+  --chart-2: 37 197 250; /* Blue */
+  --chart-3: 55 149 91; /* Success */
+  --chart-4: 179 189 189; /* Grey 2 */
+  --chart-5: 65 87 98; /* Grey 1 */
+  --sidebar: 34 36 42; /* Black */
+  --sidebar-foreground: 255 255 255; /* White */
+  --sidebar-primary: 227 255 143; /* Primary */
+  --sidebar-primary-foreground: 34 36 42; /* Black */
+  --sidebar-accent: 65 87 98; /* Grey 1 */
+  --sidebar-accent-foreground: 255 255 255; /* White */
+  --sidebar-border: 65 87 98; /* Grey 1 */
+  --sidebar-ring: 227 255 143; /* Primary */
 
   /* Custom finance colors */
-  --success: oklch(0.7 0.18 145);
-  --success-foreground: oklch(0.15 0.05 145);
-  --warning: oklch(0.8 0.15 85);
-  --warning-foreground: oklch(0.2 0.05 85);
+  --success: 55 149 91; /* Success - same in dark */
+  --success-foreground: 255 255 255; /* White */
+  --warning: 238 68 68; /* Using error color */
+  --warning-foreground: 255 255 255; /* White */
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  /* Framer Project Typography - Onest font family */
+  --font-sans: "Onest", "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-card: rgb(var(--card));
+  --color-card-foreground: rgb(var(--card-foreground));
+  --color-popover: rgb(var(--popover));
+  --color-popover-foreground: rgb(var(--popover-foreground));
+  --color-primary: rgb(var(--primary));
+  --color-primary-foreground: rgb(var(--primary-foreground));
+  --color-secondary: rgb(var(--secondary));
+  --color-secondary-foreground: rgb(var(--secondary-foreground));
+  --color-muted: rgb(var(--muted));
+  --color-muted-foreground: rgb(var(--muted-foreground));
+  --color-accent: rgb(var(--accent));
+  --color-accent-foreground: rgb(var(--accent-foreground));
+  --color-destructive: rgb(var(--destructive));
+  --color-destructive-foreground: rgb(var(--destructive-foreground));
+  --color-border: rgb(var(--border));
+  --color-input: rgb(var(--input));
+  --color-ring: rgb(var(--ring));
+  --color-primary-stroke: rgb(var(--primary-stroke));
+  --color-chart-1: rgb(var(--chart-1));
+  --color-chart-2: rgb(var(--chart-2));
+  --color-chart-3: rgb(var(--chart-3));
+  --color-chart-4: rgb(var(--chart-4));
+  --color-chart-5: rgb(var(--chart-5));
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
+  --color-sidebar: rgb(var(--sidebar));
+  --color-sidebar-foreground: rgb(var(--sidebar-foreground));
+  --color-sidebar-primary: rgb(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: rgb(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: rgb(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: rgb(var(--sidebar-accent-foreground));
+  --color-sidebar-border: rgb(var(--sidebar-border));
+  --color-sidebar-ring: rgb(var(--sidebar-ring));
+  --color-success: rgb(var(--success));
+  --color-success-foreground: rgb(var(--success-foreground));
+  --color-warning: rgb(var(--warning));
+  --color-warning-foreground: rgb(var(--warning-foreground));
 }
 
 @layer base {
@@ -137,5 +143,129 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Framer Project Typography Styles */
+  h1 {
+    font-size: 70px;
+    line-height: 1em;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+  }
+
+  h2 {
+    font-size: 60px;
+    line-height: 1em;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+  }
+
+  h3 {
+    font-size: 48px;
+    line-height: 1.05em;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+  }
+
+  h4 {
+    font-size: 36px;
+    line-height: 1.1em;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+  }
+
+  h5 {
+    font-size: 28px;
+    line-height: 1.3em;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+
+  h6 {
+    font-size: 20px;
+    line-height: 1.3em;
+    letter-spacing: 0px;
+    font-weight: 500;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.55em;
+    letter-spacing: 0px;
+    font-weight: 400;
+  }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 48px; }
+    h2 { font-size: 40px; }
+    h3 { font-size: 32px; }
+    h4 { font-size: 28px; }
+    h5 { font-size: 24px; }
+    h6 { font-size: 18px; }
+    p { font-size: 16px; }
+  }
+}
+
+/* Framer-style animations and transitions */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Improved focus states with Framer-style rings */
+  *:focus-visible {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Smooth transitions for interactive elements */
+  button,
+  a,
+  [role="button"] {
+    transition: all 0.2s ease-in-out;
   }
 }

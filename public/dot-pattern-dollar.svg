@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="96">
+  <defs>
+    <style>
+      .dollar {
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+  <path fill="transparent" d="M0 0h144v96H0Z"/>
+  <!-- First row of dots -->
+  <circle cx="12" cy="11.5" r="1.5" fill="currentColor"/>
+  <circle cx="60" cy="11.5" r="1.5" fill="currentColor"/>
+  <circle cx="108" cy="11.5" r="1.5" fill="currentColor"/>
+  <!-- Second row: 2 dots + 1 dollar sign -->
+  <circle cx="12" cy="59.5" r="1.5" fill="currentColor"/>
+  <circle cx="60" cy="59.5" r="1.5" fill="currentColor"/>
+  <text x="106" y="65" class="dollar" fill="currentColor" text-anchor="middle">$</text>
+</svg>

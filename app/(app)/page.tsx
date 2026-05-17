@@ -1,8 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { DashboardStats } from "@/components/dashboard/dashboard-stats";
-import { SpendingChart } from "@/components/dashboard/spending-chart";
-import { CategoryChart } from "@/components/dashboard/category-chart";
-import { RecentTransactions } from "@/components/dashboard/recent-transactions";
+import { DashboardContent } from "@/components/dashboard/dashboard-content";
 import type { Transaction, Category } from "@/lib/types";
 
 async function getDashboardData() {
@@ -82,32 +79,15 @@ export default async function DashboardPage() {
   const recentTransactions = transactions.slice(0, 10);
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Your financial overview at a glance
-        </p>
-      </div>
-
-      <DashboardStats
-        totalSpent={totalSpent}
-        totalIncome={totalIncome}
-        transactionCount={transactionCount}
-        avgTransaction={avgTransaction}
-      />
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <SpendingChart data={Object.values(monthlySpending)} />
-        <CategoryChart data={Object.values(spendingByCategory)} />
-      </div>
-
-      <div className="mt-8">
-        <RecentTransactions
-          transactions={recentTransactions}
-          categories={categories}
-        />
-      </div>
-    </div>
+    <DashboardContent
+      totalSpent={totalSpent}
+      totalIncome={totalIncome}
+      transactionCount={transactionCount}
+      avgTransaction={avgTransaction}
+      monthlySpending={Object.values(monthlySpending)}
+      categorySpending={Object.values(spendingByCategory)}
+      recentTransactions={recentTransactions}
+      categories={categories}
+    />
   );
 }

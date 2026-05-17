@@ -37,7 +37,7 @@ export function RecentTransactions({
         </CardTitle>
         <Link
           href="/transactions"
-          className="flex items-center gap-1 text-sm text-primary hover:underline"
+          className="flex items-center gap-1 text-sm text-foreground hover:text-foreground/80 hover:underline"
         >
           View all
           <ArrowRight className="h-4 w-4" />

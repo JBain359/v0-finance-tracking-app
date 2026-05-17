@@ -119,10 +119,10 @@ export function UploadForm() {
         <div
           className={`relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${
             isDragging
-              ? "border-primary bg-primary/5"
+              ? "border-foreground/30 bg-primary"
               : file
-                ? "border-emerald-500 bg-emerald-50"
-                : "border-border hover:border-primary/50"
+                ? "border-success bg-success/10"
+                : "border-border hover:border-foreground/30"
           }`}
           onDragOver={(e) => {
             e.preventDefault();

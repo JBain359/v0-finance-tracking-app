@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AppSidebar } from "@/components/app-sidebar";
 import { AuthProvider } from "@descope/nextjs-sdk";
 import "./globals.css";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+// Onest font from Framer project - matching the design system
+const onest = {
+  className: "font-sans",
+  style: { fontFamily: "Onest, ui-sans-serif, system-ui, sans-serif" },
+};
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono"
+});
 
 export const metadata: Metadata = {
   title: "FinTrack - Personal Finance Tracker",
@@ -44,7 +52,15 @@ export default function RootLayout({
       sessionTokenViaCookie={{ secure: process.env.NODE_ENV !== "development" }}
     >
       <html lang="en" className="bg-background">
-        <body className="font-sans antialiased">
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+          />
+        </head>
+        <body className={`${onest.className} ${geistMono.variable} antialiased`}>
           <main className="min-h-screen">{children}</main>
           {process.env.NODE_ENV === "production" && <Analytics />}
         </body>
