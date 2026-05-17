@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { AppSidebar } from '@/components/app-sidebar'
+import { AuthProvider } from '@descope/nextjs-sdk';
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -36,6 +37,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
+    <AuthProvider projectId={process.env.DESCOPE_PROJECT_ID!}>
     <html lang="en" className="bg-background">
       <body className="font-sans antialiased">
         <AppSidebar />
@@ -45,5 +47,6 @@ export default function RootLayout({
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
+    </AuthProvider>
   )
 }
