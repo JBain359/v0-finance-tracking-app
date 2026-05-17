@@ -37,11 +37,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <AuthProvider projectId={process.env.DESCOPE_PROJECT_ID!}>
+    <AuthProvider projectId={process.env.NEXT_PUBLIC_DESCOPE_PROJECT_ID!}>
     <html lang="en" className="bg-background">
       <body className="font-sans antialiased">
-        <AppSidebar />
-        <main className="ml-64 min-h-screen">
+        <main className="min-h-screen">
           {children}
         </main>
         {process.env.NODE_ENV === 'production' && <Analytics />}
