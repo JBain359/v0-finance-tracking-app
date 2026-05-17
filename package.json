@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prettier": "npx run prettier --write .",
+    "prettier": "npx prettier --write .",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

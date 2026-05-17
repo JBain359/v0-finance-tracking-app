@@ -7,7 +7,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <Descope
-        flowId="sign-up-or-in"
+        flowId="sign-in"
         onSuccess={() => router.push("/")}
         onError={(e) => console.error(e)}
       />

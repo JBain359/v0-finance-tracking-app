@@ -23,7 +23,7 @@ const navItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthenticated, isSessionLoading } = useSession();
+  const session = useSession();
   const { user } = useUser();
   const descope = useDescope();
 
