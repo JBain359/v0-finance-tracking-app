@@ -13,7 +13,7 @@ const onest = {
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-mono"
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -54,13 +54,19 @@ export default function RootLayout({
       <html lang="en" className="bg-background">
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossOrigin="anonymous"
+          />
           <link
             href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"
             rel="stylesheet"
           />
         </head>
-        <body className={`${onest.className} ${geistMono.variable} antialiased`}>
+        <body
+          className={`${onest.className} ${geistMono.variable} antialiased`}
+        >
           <main className="min-h-screen">{children}</main>
           {process.env.NODE_ENV === "production" && <Analytics />}
         </body>

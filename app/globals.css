@@ -92,7 +92,8 @@
 
 @theme inline {
   /* Framer Project Typography - Onest font family */
-  --font-sans: "Onest", "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    "Onest", "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   --color-background: rgb(var(--background));
   --color-foreground: rgb(var(--foreground));
@@ -196,13 +197,27 @@
   }
 
   @media (max-width: 768px) {
-    h1 { font-size: 48px; }
-    h2 { font-size: 40px; }
-    h3 { font-size: 32px; }
-    h4 { font-size: 28px; }
-    h5 { font-size: 24px; }
-    h6 { font-size: 18px; }
-    p { font-size: 16px; }
+    h1 {
+      font-size: 48px;
+    }
+    h2 {
+      font-size: 40px;
+    }
+    h3 {
+      font-size: 32px;
+    }
+    h4 {
+      font-size: 28px;
+    }
+    h5 {
+      font-size: 24px;
+    }
+    h6 {
+      font-size: 18px;
+    }
+    p {
+      font-size: 16px;
+    }
   }
 }
 

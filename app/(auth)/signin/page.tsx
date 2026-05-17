@@ -9,7 +9,11 @@ export default function LoginPage() {
   const router = useRouter();
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background">
-      <DotPatternCSS className="text-foreground" opacity={0.08} withDollarSigns={false} />
+      <DotPatternCSS
+        className="text-foreground"
+        opacity={0.08}
+        withDollarSigns={false}
+      />
       <motion.div
         initial="hidden"
         animate="visible"

@@ -2,7 +2,10 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingDown, TrendingUp, Receipt, Calculator } from "lucide-react";
-import { StaggerContainer, StaggerItem } from "@/components/animated-components";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/animated-components";
 import { motion } from "framer-motion";
 
 interface DashboardStatsProps {
@@ -84,7 +87,9 @@ export function DashboardStats({
                     <stat.icon className={`h-6 w-6 ${stat.color}`} />
                   </motion.div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {stat.label}
+                    </p>
                     <motion.p
                       className="text-2xl font-bold text-foreground"
                       initial={{ opacity: 0, x: -20 }}

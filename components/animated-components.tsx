@@ -244,7 +244,10 @@ export function AnimatedNumber({
 }
 
 // Page transition wrapper
-export function PageTransition({ children, className }: AnimatedContainerProps) {
+export function PageTransition({
+  children,
+  className,
+}: AnimatedContainerProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

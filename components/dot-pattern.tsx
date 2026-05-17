@@ -32,16 +32,10 @@ export function DotPattern({
 
   return (
     <div
-      className={cn(
-        "pointer-events-none fixed inset-0 z-0",
-        className
-      )}
+      className={cn("pointer-events-none fixed inset-0 z-0", className)}
       style={{ opacity }}
     >
-      <svg
-        className="h-full w-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern
             id={patternId}
@@ -51,19 +45,10 @@ export function DotPattern({
             height={spacing}
             patternUnits="userSpaceOnUse"
           >
-            <circle
-              cx={dotSize}
-              cy={dotSize}
-              r={dotSize}
-              fill={dotColor}
-            />
+            <circle cx={dotSize} cy={dotSize} r={dotSize} fill={dotColor} />
           </pattern>
         </defs>
-        <rect
-          width="100%"
-          height="100%"
-          fill={`url(#${patternId})`}
-        />
+        <rect width="100%" height="100%" fill={`url(#${patternId})`} />
       </svg>
     </div>
   );
@@ -90,10 +75,7 @@ export function DotPatternCSS({
 
   return (
     <div
-      className={cn(
-        "pointer-events-none fixed inset-0 z-0",
-        className
-      )}
+      className={cn("pointer-events-none fixed inset-0 z-0", className)}
       style={{
         opacity,
         backgroundImage: withDollarSigns ? dollarPattern : dotsOnlyPattern,

@@ -33,21 +33,25 @@ export function ScrollProgress({
 
       if (startEl && endEl) {
         const viewportHeight = window.innerHeight;
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
         const startPosition = startEl.offsetTop;
-        const endPosition = endEl.offsetTop + endEl.offsetHeight - viewportHeight;
+        const endPosition =
+          endEl.offsetTop + endEl.offsetHeight - viewportHeight;
         const totalScrollDistance = endPosition - startPosition;
         const currentScrollDistance = scrollTop - startPosition;
         const scrollProgress = Math.max(
           0,
-          Math.min(100, (currentScrollDistance / totalScrollDistance) * 100)
+          Math.min(100, (currentScrollDistance / totalScrollDistance) * 100),
         );
 
         setProgress(scrollProgress);
       } else {
         // Fallback: calculate based on document height
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
         const scrollProgress = (scrollTop / docHeight) * 100;
         setProgress(scrollProgress);
       }

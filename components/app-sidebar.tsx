@@ -33,7 +33,10 @@ export function AppSidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-sidebar-border bg-sidebar">
       <div className="flex h-full flex-col">
-        <SlideInLeft delay={0} className="flex h-16 items-center gap-2 border-sidebar-border px-6">
+        <SlideInLeft
+          delay={0}
+          className="flex h-16 items-center gap-2 border-sidebar-border px-6"
+        >
           <motion.div
             className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary border-2 border-foreground/20"
             whileHover={{ scale: 1.1, rotate: 5 }}
