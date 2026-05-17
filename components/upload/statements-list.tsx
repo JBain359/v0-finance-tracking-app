@@ -1,56 +1,67 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { FileText, Trash2, Loader2 } from 'lucide-react'
-import type { Statement } from '@/lib/types'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { FileText, Trash2, Loader2 } from "lucide-react";
+import type { Statement } from "@/lib/types";
 
 interface StatementsListProps {
-  statements: Statement[]
+  statements: Statement[];
 }
 
 function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export function StatementsList({ statements }: StatementsListProps) {
-  const router = useRouter()
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const router = useRouter();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this statement and all its transactions?')) {
-      return
+    if (
+      !confirm(
+        "Are you sure you want to delete this statement and all its transactions?",
+      )
+    ) {
+      return;
     }
 
-    setDeletingId(id)
+    setDeletingId(id);
     try {
       const response = await fetch(`/api/statements/${id}`, {
-        method: 'DELETE',
-      })
+        method: "DELETE",
+      });
 
       if (response.ok) {
-        router.refresh()
+        router.refresh();
       }
     } catch (error) {
-      console.error('Failed to delete statement:', error)
+      console.error("Failed to delete statement:", error);
     } finally {
-      setDeletingId(null)
+      setDeletingId(null);
     }
-  }
+  };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Uploaded Statements</CardTitle>
         <CardDescription>
-          {statements.length} statement{statements.length !== 1 ? 's' : ''} uploaded
+          {statements.length} statement{statements.length !== 1 ? "s" : ""}{" "}
+          uploaded
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -72,7 +83,9 @@ export function StatementsList({ statements }: StatementsListProps) {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{formatDate(statement.uploaded_at)}</span>
                       <Badge variant="secondary" className="text-xs">
-                        {statement.source_type === 'credit_card' ? 'Credit Card' : 'Bank'}
+                        {statement.source_type === "credit_card"
+                          ? "Credit Card"
+                          : "Bank"}
                       </Badge>
                       {statement.processed && (
                         <Badge variant="outline" className="text-xs">
@@ -105,5 +118,5 @@ export function StatementsList({ statements }: StatementsListProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

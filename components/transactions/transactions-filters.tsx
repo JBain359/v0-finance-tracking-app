@@ -1,39 +1,39 @@
-'use client'
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useCallback } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useCallback } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Search, X, TrendingDown, TrendingUp, Receipt } from 'lucide-react'
-import type { Category } from '@/lib/types'
+} from "@/components/ui/select";
+import { Search, X, TrendingDown, TrendingUp, Receipt } from "lucide-react";
+import type { Category } from "@/lib/types";
 
 interface TransactionsFiltersProps {
-  categories: Category[]
+  categories: Category[];
   currentFilters: {
-    search?: string
-    category?: string
-    type?: string
-    startDate?: string
-    endDate?: string
-  }
-  transactionCount: number
-  totalDebit: number
-  totalCredit: number
+    search?: string;
+    category?: string;
+    type?: string;
+    startDate?: string;
+    endDate?: string;
+  };
+  transactionCount: number;
+  totalDebit: number;
+  totalCredit: number;
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount)
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
 }
 
 export function TransactionsFilters({
@@ -43,33 +43,38 @@ export function TransactionsFilters({
   totalDebit,
   totalCredit,
 }: TransactionsFiltersProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [search, setSearch] = useState(currentFilters.search || '')
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(currentFilters.search || "");
 
   const updateFilters = useCallback(
     (key: string, value: string | null) => {
-      const params = new URLSearchParams(searchParams.toString())
-      if (value && value !== 'all') {
-        params.set(key, value)
+      const params = new URLSearchParams(searchParams.toString());
+      if (value && value !== "all") {
+        params.set(key, value);
       } else {
-        params.delete(key)
+        params.delete(key);
       }
-      router.push(`/transactions?${params.toString()}`)
+      router.push(`/transactions?${params.toString()}`);
     },
-    [router, searchParams]
-  )
+    [router, searchParams],
+  );
 
   const handleSearch = () => {
-    updateFilters('search', search || null)
-  }
+    updateFilters("search", search || null);
+  };
 
   const clearFilters = () => {
-    setSearch('')
-    router.push('/transactions')
-  }
+    setSearch("");
+    router.push("/transactions");
+  };
 
-  const hasFilters = currentFilters.search || currentFilters.category || currentFilters.type || currentFilters.startDate || currentFilters.endDate
+  const hasFilters =
+    currentFilters.search ||
+    currentFilters.category ||
+    currentFilters.type ||
+    currentFilters.startDate ||
+    currentFilters.endDate;
 
   return (
     <div className="space-y-4">
@@ -82,7 +87,9 @@ export function TransactionsFilters({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Showing</p>
-              <p className="text-lg font-semibold">{transactionCount} transactions</p>
+              <p className="text-lg font-semibold">
+                {transactionCount} transactions
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -93,7 +100,9 @@ export function TransactionsFilters({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total Spent</p>
-              <p className="text-lg font-semibold">{formatCurrency(totalDebit)}</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(totalDebit)}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -104,7 +113,9 @@ export function TransactionsFilters({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total Income</p>
-              <p className="text-lg font-semibold">{formatCurrency(totalCredit)}</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(totalCredit)}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -121,7 +132,7 @@ export function TransactionsFilters({
                   placeholder="Search transactions..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   className="pl-9"
                 />
               </div>
@@ -131,8 +142,8 @@ export function TransactionsFilters({
             </div>
 
             <Select
-              value={currentFilters.category || 'all'}
-              onValueChange={(value) => updateFilters('category', value)}
+              value={currentFilters.category || "all"}
+              onValueChange={(value) => updateFilters("category", value)}
             >
               <SelectTrigger className="w-[160px]">
                 <SelectValue placeholder="Category" />
@@ -148,8 +159,8 @@ export function TransactionsFilters({
             </Select>
 
             <Select
-              value={currentFilters.type || 'all'}
-              onValueChange={(value) => updateFilters('type', value)}
+              value={currentFilters.type || "all"}
+              onValueChange={(value) => updateFilters("type", value)}
             >
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Type" />
@@ -163,16 +174,18 @@ export function TransactionsFilters({
 
             <Input
               type="date"
-              value={currentFilters.startDate || ''}
-              onChange={(e) => updateFilters('startDate', e.target.value || null)}
+              value={currentFilters.startDate || ""}
+              onChange={(e) =>
+                updateFilters("startDate", e.target.value || null)
+              }
               className="w-[150px]"
               placeholder="Start Date"
             />
 
             <Input
               type="date"
-              value={currentFilters.endDate || ''}
-              onChange={(e) => updateFilters('endDate', e.target.value || null)}
+              value={currentFilters.endDate || ""}
+              onChange={(e) => updateFilters("endDate", e.target.value || null)}
               className="w-[150px]"
               placeholder="End Date"
             />
@@ -187,5 +200,5 @@ export function TransactionsFilters({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

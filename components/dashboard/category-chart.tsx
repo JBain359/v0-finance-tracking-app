@@ -1,34 +1,41 @@
-'use client'
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
-import type { SpendingByCategory } from '@/lib/types'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts";
+import type { SpendingByCategory } from "@/lib/types";
 
 interface CategoryChartProps {
-  data: SpendingByCategory[]
+  data: SpendingByCategory[];
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 export function CategoryChart({ data }: CategoryChartProps) {
   // Sort by total and take top 6
-  const sortedData = [...data]
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 6)
+  const sortedData = [...data].sort((a, b) => b.total - a.total).slice(0, 6);
 
-  const hasData = sortedData.length > 0
+  const hasData = sortedData.length > 0;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Spending by Category</CardTitle>
+        <CardTitle className="text-lg font-semibold">
+          Spending by Category
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {hasData ? (
@@ -49,20 +56,25 @@ export function CategoryChart({ data }: CategoryChartProps) {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  formatter={(value: number) => [formatCurrency(value), 'Spent']}
+                <Tooltip
+                  formatter={(value: number) => [
+                    formatCurrency(value),
+                    "Spent",
+                  ]}
                   contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
                 />
-                <Legend 
+                <Legend
                   layout="vertical"
                   align="right"
                   verticalAlign="middle"
-                  formatter={(value) => <span className="text-sm text-foreground">{value}</span>}
+                  formatter={(value) => (
+                    <span className="text-sm text-foreground">{value}</span>
+                  )}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -74,5 +86,5 @@ export function CategoryChart({ data }: CategoryChartProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,12 +1,18 @@
-'use client'
+"use client";
 
-import { useChat } from '@ai-sdk/react'
-import { DefaultChatTransport } from 'ai'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Send, Loader2, MessageSquare, Sparkles } from 'lucide-react'
-import { useState } from 'react'
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Send, Loader2, MessageSquare, Sparkles } from "lucide-react";
+import { useState } from "react";
 
 const suggestedQuestions = [
   "How much did I spend on groceries last month?",
@@ -14,36 +20,38 @@ const suggestedQuestions = [
   "Show me my monthly spending trends",
   "Which merchants do I spend the most at?",
   "Compare my spending this month vs last month",
-]
+];
 
-function getMessageText(message: { parts?: { type: string; text?: string }[] }): string {
-  if (!message.parts || !Array.isArray(message.parts)) return ''
+function getMessageText(message: {
+  parts?: { type: string; text?: string }[];
+}): string {
+  if (!message.parts || !Array.isArray(message.parts)) return "";
   return message.parts
-    .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
     .map((p) => p.text)
-    .join('')
+    .join("");
 }
 
 export default function ChatPage() {
-  const [input, setInput] = useState('')
-  
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
-  })
+  const [input, setInput] = useState("");
 
-  const isLoading = status === 'streaming' || status === 'submitted'
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
+  });
+
+  const isLoading = status === "streaming" || status === "submitted";
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-    sendMessage({ text: input })
-    setInput('')
-  }
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    sendMessage({ text: input });
+    setInput("");
+  };
 
   const handleSuggestion = (question: string) => {
-    if (isLoading) return
-    sendMessage({ text: question })
-  }
+    if (isLoading) return;
+    sendMessage({ text: question });
+  };
 
   return (
     <div className="flex h-[calc(100vh-2rem)] flex-col p-6 lg:p-8">
@@ -101,33 +109,35 @@ export default function ChatPage() {
               </div>
             ) : (
               messages.map((message) => {
-                const text = getMessageText(message)
-                const isUser = message.role === 'user'
-                
+                const text = getMessageText(message);
+                const isUser = message.role === "user";
+
                 return (
                   <div
                     key={message.id}
-                    className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${isUser ? "justify-end" : "justify-start"}`}
                   >
                     <div
                       className={`max-w-[80%] rounded-lg px-4 py-3 ${
                         isUser
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-foreground'
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-foreground"
                       }`}
                     >
                       <p className="whitespace-pre-wrap text-sm">{text}</p>
                     </div>
                   </div>
-                )
+                );
               })
             )}
-            
+
             {isLoading && (
               <div className="flex justify-start">
                 <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-3">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Thinking...</span>
+                  <span className="text-sm text-muted-foreground">
+                    Thinking...
+                  </span>
                 </div>
               </div>
             )}
@@ -155,5 +165,5 @@ export default function ChatPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
