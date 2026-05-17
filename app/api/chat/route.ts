@@ -1,12 +1,14 @@
 import { streamText, tool, convertToModelMessages } from 'ai'
+import { bedrock } from '@ai-sdk/amazon-bedrock';
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 
+
 export async function POST(request: Request) {
-  const { messages } = await request.json()
+  const { messages } = await request.json();
 
   const result = streamText({
-    model: 'openai/gpt-4o-mini',
+    model: bedrock('us.anthropic.claude-sonnet-4-6'),    
     system: `You are a helpful financial assistant that analyzes the user's transaction data. 
 You have access to tools that can query their spending data from their uploaded bank and credit card statements.
 
@@ -16,12 +18,15 @@ When answering questions:
 - Be concise but informative
 - If there's no data available, let the user know they should upload statements first
 - When showing categories, mention the specific amounts
-- Round percentages to 1 decimal place`,
+- Round percentages to 1 decimal place
+
+After using whatever tools necessary, please then present your findings back to the user.
+`,
     messages: await convertToModelMessages(messages),
     tools: {
       getSpendingByCategory: tool({
         description: 'Get total spending grouped by category for a given time period',
-        parameters: z.object({
+        inputSchema: z.object({
           startDate: z.string().optional().describe('Start date in YYYY-MM-DD format'),
           endDate: z.string().optional().describe('End date in YYYY-MM-DD format'),
           limit: z.number().optional().default(10).describe('Number of categories to return'),
@@ -67,7 +72,7 @@ When answering questions:
 
       getMonthlySpending: tool({
         description: 'Get monthly spending totals over time',
-        parameters: z.object({
+        inputSchema: z.object({
           months: z.number().optional().default(6).describe('Number of months to look back'),
         }),
         execute: async ({ months }) => {
@@ -101,7 +106,7 @@ When answering questions:
 
       getTopMerchants: tool({
         description: 'Get the merchants where the user spends the most',
-        parameters: z.object({
+        inputSchema: z.object({
           startDate: z.string().optional().describe('Start date in YYYY-MM-DD format'),
           endDate: z.string().optional().describe('End date in YYYY-MM-DD format'),
           limit: z.number().optional().default(10).describe('Number of merchants to return'),
@@ -148,7 +153,7 @@ When answering questions:
 
       searchTransactions: tool({
         description: 'Search for specific transactions by description or merchant',
-        parameters: z.object({
+        inputSchema: z.object({
           query: z.string().describe('Search term to look for in transaction descriptions'),
           limit: z.number().optional().default(20).describe('Number of results to return'),
         }),
@@ -178,7 +183,7 @@ When answering questions:
 
       getSpendingSummary: tool({
         description: 'Get a summary of overall spending including total spent, income, and transaction count',
-        parameters: z.object({
+        inputSchema: z.object({
           startDate: z.string().optional().describe('Start date in YYYY-MM-DD format'),
           endDate: z.string().optional().describe('End date in YYYY-MM-DD format'),
         }),
@@ -219,7 +224,7 @@ When answering questions:
 
       compareMonths: tool({
         description: 'Compare spending between two months',
-        parameters: z.object({
+        inputSchema: z.object({
           month1: z.string().describe('First month in YYYY-MM format'),
           month2: z.string().describe('Second month in YYYY-MM format'),
         }),
