@@ -30,6 +30,15 @@ export function AppSidebar() {
   const { user } = useUser();
   const descope = useDescope();
 
+  const handleLogout = async () => {
+    try {
+      await descope.logout();
+      router.push("/signin");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-sidebar-border bg-sidebar">
       <div className="flex h-full flex-col">
@@ -101,10 +110,7 @@ export function AppSidebar() {
             Personal Finance Tracker
           </p>
           <motion.button
-            onClick={() => {
-              descope.logout();
-              router.push("signin");
-            }}
+            onClick={handleLogout}
             className="flex w-full items-center gap-2 rounded-lg bg-sidebar-accent/50 px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
