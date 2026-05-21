@@ -5,6 +5,7 @@ import type { Statement } from "@/lib/types";
 
 async function getStatements() {
   const supabase = await createClient();
+  // RLS automatically filters by user_id from JWT
   const { data } = await supabase
     .from("statements")
     .select("*")

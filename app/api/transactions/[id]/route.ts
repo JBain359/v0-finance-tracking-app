@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getDescopeUserId } from "@/lib/supabase/auth";
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Check authentication
+    const userId = await getDescopeUserId();
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
     const body = await request.json();
 
     const supabase = await createClient();
 
+    // RLS automatically ensures user can only update their own transactions
     const { error } = await supabase
       .from("transactions")
       .update({ category: body.category })

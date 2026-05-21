@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { get } from "@vercel/blob";
 import { createClient } from "@/lib/supabase/server";
+import { getDescopeUserId } from "@/lib/supabase/auth";
 import Papa from "papaparse";
 import { categorizeTransaction } from "@/lib/categorize";
 
@@ -118,6 +119,15 @@ function parseCSV(content: string): ParsedTransaction[] {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const userId = await getDescopeUserId();
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const { statementId } = await request.json();
 
     if (!statementId) {
@@ -129,7 +139,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
-    // Get statement record
+    // Get statement record (RLS will ensure user owns this statement)
     const { data: statement, error: fetchError } = await supabase
       .from("statements")
       .select("*")
@@ -199,13 +209,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Categorize and insert transactions
+    // Categorize and insert transactions with user_id
     const transactionsToInsert = transactions.map((t) => {
       const { category, merchant } = categorizeTransaction(
         t.description,
         categoryList,
       );
       return {
+        user_id: userId,
         statement_id: statementId,
         date: t.date,
         description: t.description,

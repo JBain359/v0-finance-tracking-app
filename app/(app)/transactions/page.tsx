@@ -37,6 +37,7 @@ async function getTransactions(
   const sortOrder = filters.sortOrder || "desc";
   const ascending = sortOrder === "asc";
 
+  // RLS automatically filters by user_id from JWT
   let query = supabase
     .from("transactions")
     .select("*", { count: "exact" })
@@ -79,7 +80,11 @@ async function getTransactions(
 
 async function getCategories() {
   const supabase = await createClient();
-  const { data } = await supabase.from("categories").select("*").order("name");
+  // RLS automatically filters by user_id from JWT
+  const { data } = await supabase
+    .from("categories")
+    .select("*")
+    .order("name");
 
   return (data || []) as Category[];
 }

@@ -1,5 +1,6 @@
 export interface Statement {
   id: string;
+  user_id: string;
   filename: string;
   blob_pathname: string;
   file_type: "csv" | "pdf";
@@ -11,6 +12,7 @@ export interface Statement {
 
 export interface Transaction {
   id: string;
+  user_id: string;
   statement_id: string | null;
   date: string;
   description: string;
@@ -24,6 +26,7 @@ export interface Transaction {
 
 export interface Category {
   id: string;
+  user_id: string;
   name: string;
   icon: string | null;
   color: string | null;

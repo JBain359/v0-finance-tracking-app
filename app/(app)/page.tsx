@@ -6,6 +6,7 @@ async function getDashboardData() {
   const supabase = await createClient();
 
   // Get transactions from the last 6 months
+  // RLS automatically filters by user_id from JWT
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
@@ -15,7 +16,9 @@ async function getDashboardData() {
     .gte("date", sixMonthsAgo.toISOString().split("T")[0])
     .order("date", { ascending: false });
 
-  const { data: categories } = await supabase.from("categories").select("*");
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("*");
 
   return {
     transactions: (transactions || []) as Transaction[],

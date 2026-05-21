@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { createClient } from "@/lib/supabase/server";
+import { getDescopeUserId } from "@/lib/supabase/auth";
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const userId = await getDescopeUserId();
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const sourceType = formData.get("sourceType") as "bank" | "credit_card";
@@ -25,11 +35,12 @@ export async function POST(request: NextRequest) {
       access: "private",
     });
 
-    // Create statement record in database
+    // Create statement record in database with user_id
     const supabase = await createClient();
     const { data: statement, error } = await supabase
       .from("statements")
       .insert({
+        user_id: userId,
         filename: file.name,
         blob_pathname: blob.pathname,
         file_type: fileExtension as "csv" | "pdf",

@@ -1,23 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import { del } from "@vercel/blob";
 import { createClient } from "@/lib/supabase/server";
+import { getDescopeUserId } from "@/lib/supabase/auth";
 
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Check authentication
+    const userId = await getDescopeUserId();
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
     const supabase = await createClient();
 
-    // Get the statement to find the blob pathname
+    // RLS automatically ensures user can only access their own statements
     const { data: statement } = await supabase
       .from("statements")
       .select("blob_pathname")
       .eq("id", id)
       .single();
 
-    if (statement?.blob_pathname) {
+    if (!statement) {
+      return NextResponse.json(
+        { error: "Statement not found" },
+        { status: 404 }
+      );
+    }
+
+    if (statement.blob_pathname) {
       try {
         // Delete from blob storage
         await del(statement.blob_pathname);
@@ -27,7 +44,11 @@ export async function DELETE(
     }
 
     // Delete statement (transactions will cascade delete)
-    const { error } = await supabase.from("statements").delete().eq("id", id);
+    // RLS automatically ensures user can only delete their own statements
+    const { error } = await supabase
+      .from("statements")
+      .delete()
+      .eq("id", id);
 
     if (error) {
       return NextResponse.json(
