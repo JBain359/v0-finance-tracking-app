@@ -149,7 +149,7 @@ export default function SignInPage() {
                 >
                   <GlassCard className="p-6" blur="lg" gradient>
                     <Descope
-                      flowId="sign-in"
+                      flowId="sign-up-or-in"
                       onSuccess={() => router.push("/")}
                       onError={(e) => console.error(e)}
                     />
