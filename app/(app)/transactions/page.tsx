@@ -10,22 +10,37 @@ interface PageProps {
     type?: string;
     startDate?: string;
     endDate?: string;
+    page?: string;
+    sortBy?: string;
+    sortOrder?: string;
   }>;
 }
 
-async function getTransactions(filters: {
-  search?: string;
-  category?: string;
-  type?: string;
-  startDate?: string;
-  endDate?: string;
-}) {
+const TRANSACTIONS_PER_PAGE = 25;
+
+async function getTransactions(
+  filters: {
+    search?: string;
+    category?: string;
+    type?: string;
+    startDate?: string;
+    endDate?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  },
+  page: number = 1,
+) {
   const supabase = await createClient();
+
+  // Determine sort column and order
+  const sortBy = filters.sortBy || "date";
+  const sortOrder = filters.sortOrder || "desc";
+  const ascending = sortOrder === "asc";
 
   let query = supabase
     .from("transactions")
-    .select("*")
-    .order("date", { ascending: false });
+    .select("*", { count: "exact" })
+    .order(sortBy, { ascending });
 
   if (filters.search) {
     query = query.or(
@@ -49,9 +64,17 @@ async function getTransactions(filters: {
     query = query.lte("date", filters.endDate);
   }
 
-  const { data } = await query.limit(500);
+  const from = (page - 1) * TRANSACTIONS_PER_PAGE;
+  const to = from + TRANSACTIONS_PER_PAGE - 1;
 
-  return (data || []) as Transaction[];
+  const { data, count } = await query.range(from, to);
+
+  return {
+    transactions: (data || []) as Transaction[],
+    totalCount: count || 0,
+    currentPage: page,
+    totalPages: Math.ceil((count || 0) / TRANSACTIONS_PER_PAGE),
+  };
 }
 
 async function getCategories() {
@@ -63,12 +86,16 @@ async function getCategories() {
 
 export default async function TransactionsPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const [transactions, categories] = await Promise.all([
-    getTransactions(params),
+  const page = parseInt(params.page || "1", 10);
+
+  const [transactionData, categories] = await Promise.all([
+    getTransactions(params, page),
     getCategories(),
   ]);
 
-  // Calculate totals
+  const { transactions, totalCount, currentPage, totalPages } = transactionData;
+
+  // Calculate totals for current page
   const totalDebit = transactions
     .filter((t) => t.transaction_type === "debit")
     .reduce((sum, t) => sum + Math.abs(Number(t.amount)), 0);
@@ -89,7 +116,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
       <TransactionsFilters
         categories={categories}
         currentFilters={params}
-        transactionCount={transactions.length}
+        transactionCount={totalCount}
         totalDebit={totalDebit}
         totalCredit={totalCredit}
       />
@@ -98,6 +125,11 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
         <TransactionsTable
           transactions={transactions}
           categories={categories}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalCount={totalCount}
+          sortBy={params.sortBy || "date"}
+          sortOrder={params.sortOrder || "desc"}
         />
       </div>
     </div>

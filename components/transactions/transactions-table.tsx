@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,11 +20,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import type { Transaction, Category } from "@/lib/types";
 
 interface TransactionsTableProps {
   transactions: Transaction[];
   categories: Category[];
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  sortBy: string;
+  sortOrder: string;
 }
 
 function formatCurrency(amount: number) {
@@ -45,10 +51,54 @@ function formatDate(dateString: string) {
 export function TransactionsTable({
   transactions,
   categories,
+  currentPage,
+  totalPages,
+  totalCount,
+  sortBy,
+  sortOrder,
 }: TransactionsTableProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const categoryMap = new Map(categories.map((c) => [c.name, c]));
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+    router.push(`/transactions?${params.toString()}`);
+  };
+
+  const handleSort = (column: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    // If clicking the same column, toggle order; otherwise default to desc
+    if (sortBy === column) {
+      const newOrder = sortOrder === "asc" ? "desc" : "asc";
+      params.set("sortOrder", newOrder);
+    } else {
+      params.set("sortBy", column);
+      params.set("sortOrder", "desc");
+    }
+
+    // Reset to page 1 when sorting changes
+    params.delete("page");
+    router.push(`/transactions?${params.toString()}`);
+    router.refresh();
+  };
+
+  const SortableHeader = ({ column, children }: { column: string; children: React.ReactNode }) => {
+    const isActive = sortBy === column;
+    const Icon = !isActive ? ArrowUpDown : sortOrder === "asc" ? ArrowUp : ArrowDown;
+
+    return (
+      <TableHead className="cursor-pointer select-none" onClick={() => handleSort(column)}>
+        <div className="flex items-center gap-2 hover:text-foreground transition-colors">
+          {children}
+          <Icon className={`h-4 w-4 ${isActive ? "text-foreground" : "text-muted-foreground"}`} />
+        </div>
+      </TableHead>
+    );
+  };
 
   const handleCategoryChange = async (
     transactionId: string,
@@ -82,17 +132,24 @@ export function TransactionsTable({
     );
   }
 
+  const startRecord = (currentPage - 1) * 25 + 1;
+  const endRecord = Math.min(currentPage * 25, totalCount);
+
   return (
     <Card>
       <CardContent className="p-0">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Date</TableHead>
+              <SortableHeader column="date">
+                <span className="w-[100px]">Date</span>
+              </SortableHeader>
               <TableHead>Description</TableHead>
               <TableHead className="w-[150px]">Category</TableHead>
               <TableHead className="w-[100px]">Type</TableHead>
-              <TableHead className="w-[120px] text-right">Amount</TableHead>
+              <SortableHeader column="amount">
+                <span className="w-[120px] text-right block">Amount</span>
+              </SortableHeader>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -174,6 +231,40 @@ export function TransactionsTable({
           </TableBody>
         </Table>
       </CardContent>
+      {totalPages > 1 && (
+        <CardFooter className="flex items-center justify-between border-t px-6 py-4">
+          <div className="text-sm text-muted-foreground">
+            Showing <span className="font-medium">{startRecord}</span> to{" "}
+            <span className="font-medium">{endRecord}</span> of{" "}
+            <span className="font-medium">{totalCount}</span> transactions
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </CardFooter>
+      )}
     </Card>
   );
 }

@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, X, TrendingDown, TrendingUp, Receipt } from "lucide-react";
+import { Search, X, TrendingDown, TrendingUp, Receipt, Calendar } from "lucide-react";
 import type { Category } from "@/lib/types";
 
 interface TransactionsFiltersProps {
@@ -55,6 +55,8 @@ export function TransactionsFilters({
       } else {
         params.delete(key);
       }
+      // Reset to page 1 when filters change
+      params.delete("page");
       router.push(`/transactions?${params.toString()}`);
     },
     [router, searchParams],
@@ -172,23 +174,37 @@ export function TransactionsFilters({
               </SelectContent>
             </Select>
 
-            <Input
-              type="date"
-              value={currentFilters.startDate || ""}
-              onChange={(e) =>
-                updateFilters("startDate", e.target.value || null)
-              }
-              className="w-[150px]"
-              placeholder="Start Date"
-            />
-
-            <Input
-              type="date"
-              value={currentFilters.endDate || ""}
-              onChange={(e) => updateFilters("endDate", e.target.value || null)}
-              className="w-[150px]"
-              placeholder="End Date"
-            />
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="date"
+                  value={currentFilters.startDate || ""}
+                  onChange={(e) =>
+                    updateFilters("startDate", e.target.value || null)
+                  }
+                  className="w-[170px] pl-9"
+                />
+                <label className="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                  From
+                </label>
+              </div>
+              <span className="text-muted-foreground">→</span>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="date"
+                  value={currentFilters.endDate || ""}
+                  onChange={(e) =>
+                    updateFilters("endDate", e.target.value || null)
+                  }
+                  className="w-[170px] pl-9"
+                />
+                <label className="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                  To
+                </label>
+              </div>
+            </div>
 
             {hasFilters && (
               <Button variant="ghost" onClick={clearFilters} className="gap-1">
