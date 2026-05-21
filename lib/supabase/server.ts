@@ -8,8 +8,8 @@ async function getDescopeToken(): Promise<string | null> {
   try {
     const cookieStore = await cookies();
     // Descope session token cookie
-    const sessionToken = cookieStore.get("DS")?.value ||
-                        cookieStore.get("DSR")?.value;
+    const sessionToken =
+      cookieStore.get("DS")?.value || cookieStore.get("DSR")?.value;
     return sessionToken || null;
   } catch (error) {
     console.error("Error getting Descope token:", error);

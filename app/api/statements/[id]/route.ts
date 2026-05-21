@@ -11,10 +11,7 @@ export async function DELETE(
     // Check authentication
     const userId = await getDescopeUserId();
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -30,7 +27,7 @@ export async function DELETE(
     if (!statement) {
       return NextResponse.json(
         { error: "Statement not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -45,10 +42,7 @@ export async function DELETE(
 
     // Delete statement (transactions will cascade delete)
     // RLS automatically ensures user can only delete their own statements
-    const { error } = await supabase
-      .from("statements")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("statements").delete().eq("id", id);
 
     if (error) {
       return NextResponse.json(

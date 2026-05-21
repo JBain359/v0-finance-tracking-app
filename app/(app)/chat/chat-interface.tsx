@@ -11,7 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Loader2, MessageSquare, Sparkles, Upload, AlertCircle } from "lucide-react";
+import {
+  Send,
+  Loader2,
+  MessageSquare,
+  Sparkles,
+  Upload,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -98,7 +105,8 @@ export default function ChatInterface({ hasStatements }: ChatInterfaceProps) {
                         No Financial Data Available
                       </h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        To start chatting with your financial data, you need to upload at least one bank statement first.
+                        To start chatting with your financial data, you need to
+                        upload at least one bank statement first.
                       </p>
                     </div>
                     <Link href="/upload">
@@ -183,7 +191,8 @@ export default function ChatInterface({ hasStatements }: ChatInterfaceProps) {
                     Chat disabled
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Upload a statement to start chatting with your financial data
+                    Upload a statement to start chatting with your financial
+                    data
                   </p>
                 </div>
                 <Link href="/upload">

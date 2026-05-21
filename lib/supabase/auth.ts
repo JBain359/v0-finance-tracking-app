@@ -10,8 +10,8 @@ export async function getDescopeUserId(): Promise<string | null> {
 
     // Descope stores the session token in a cookie
     // The cookie name depends on your Descope project configuration
-    const sessionToken = cookieStore.get("DS")?.value ||
-                        cookieStore.get("DSR")?.value;
+    const sessionToken =
+      cookieStore.get("DS")?.value || cookieStore.get("DSR")?.value;
 
     if (!sessionToken) {
       return null;
@@ -26,7 +26,7 @@ export async function getDescopeUserId(): Promise<string | null> {
 
     // Decode the payload (base64url)
     const payload = JSON.parse(
-      Buffer.from(parts[1], "base64url").toString("utf-8")
+      Buffer.from(parts[1], "base64url").toString("utf-8"),
     );
 
     return payload.sub || null;

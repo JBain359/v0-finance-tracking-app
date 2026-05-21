@@ -12,7 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, X, TrendingDown, TrendingUp, Receipt, Calendar } from "lucide-react";
+import {
+  Search,
+  X,
+  TrendingDown,
+  TrendingUp,
+  Receipt,
+  Calendar,
+} from "lucide-react";
 import type { Category } from "@/lib/types";
 
 interface TransactionsFiltersProps {

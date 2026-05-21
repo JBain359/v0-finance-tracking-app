@@ -10,10 +10,7 @@ export async function PATCH(
     // Check authentication
     const userId = await getDescopeUserId();
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;

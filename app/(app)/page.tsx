@@ -16,9 +16,7 @@ async function getDashboardData() {
     .gte("date", sixMonthsAgo.toISOString().split("T")[0])
     .order("date", { ascending: false });
 
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*");
+  const { data: categories } = await supabase.from("categories").select("*");
 
   return {
     transactions: (transactions || []) as Transaction[],

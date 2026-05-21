@@ -81,10 +81,7 @@ async function getTransactions(
 async function getCategories() {
   const supabase = await createClient();
   // RLS automatically filters by user_id from JWT
-  const { data } = await supabase
-    .from("categories")
-    .select("*")
-    .order("name");
+  const { data } = await supabase.from("categories").select("*").order("name");
 
   return (data || []) as Category[];
 }

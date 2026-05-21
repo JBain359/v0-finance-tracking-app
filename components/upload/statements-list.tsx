@@ -40,7 +40,9 @@ export function StatementsList({ statements }: StatementsListProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [statementToDelete, setStatementToDelete] = useState<Statement | null>(null);
+  const [statementToDelete, setStatementToDelete] = useState<Statement | null>(
+    null,
+  );
 
   const openDeleteDialog = (statement: Statement) => {
     setStatementToDelete(statement);

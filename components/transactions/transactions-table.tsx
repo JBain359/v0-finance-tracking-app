@@ -20,7 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import type { Transaction, Category } from "@/lib/types";
 
 interface TransactionsTableProps {
@@ -86,15 +92,30 @@ export function TransactionsTable({
     router.refresh();
   };
 
-  const SortableHeader = ({ column, children }: { column: string; children: React.ReactNode }) => {
+  const SortableHeader = ({
+    column,
+    children,
+  }: {
+    column: string;
+    children: React.ReactNode;
+  }) => {
     const isActive = sortBy === column;
-    const Icon = !isActive ? ArrowUpDown : sortOrder === "asc" ? ArrowUp : ArrowDown;
+    const Icon = !isActive
+      ? ArrowUpDown
+      : sortOrder === "asc"
+        ? ArrowUp
+        : ArrowDown;
 
     return (
-      <TableHead className="cursor-pointer select-none" onClick={() => handleSort(column)}>
+      <TableHead
+        className="cursor-pointer select-none"
+        onClick={() => handleSort(column)}
+      >
         <div className="flex items-center gap-2 hover:text-foreground transition-colors">
           {children}
-          <Icon className={`h-4 w-4 ${isActive ? "text-foreground" : "text-muted-foreground"}`} />
+          <Icon
+            className={`h-4 w-4 ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+          />
         </div>
       </TableHead>
     );

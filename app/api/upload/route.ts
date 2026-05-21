@@ -8,10 +8,7 @@ export async function POST(request: NextRequest) {
     // Check authentication
     const userId = await getDescopeUserId();
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const formData = await request.formData();
