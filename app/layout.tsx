@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { AppSidebar } from "@/components/app-sidebar";
 import { AuthProvider } from "@descope/nextjs-sdk";
 import "./globals.css";
 

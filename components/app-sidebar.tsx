@@ -48,7 +48,7 @@ export function AppSidebar() {
             FinTrack
           </span>
         </SlideInLeft>
-        {user && (
+        {session.isAuthenticated && user &&  (
           <motion.p
             className="border-b px-6 py-2 text-sm text-sidebar-foreground/80"
             initial={{ opacity: 0, x: -20 }}
