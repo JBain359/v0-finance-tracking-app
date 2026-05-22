@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const suggestedQuestions = [
   "How much did I spend on groceries last month?",
@@ -162,7 +164,61 @@ export default function ChatInterface({ hasStatements }: ChatInterfaceProps) {
                           : "bg-muted text-foreground"
                       }`}
                     >
-                      <p className="whitespace-pre-wrap text-sm">{text}</p>
+                      {isUser ? (
+                        <p className="whitespace-pre-wrap text-sm">{text}</p>
+                      ) : (
+                        <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              p: ({ children }) => (
+                                <p className="mb-2 last:mb-0">{children}</p>
+                              ),
+                              ul: ({ children }) => (
+                                <ul className="mb-2 list-disc pl-4">{children}</ul>
+                              ),
+                              ol: ({ children }) => (
+                                <ol className="mb-2 list-decimal pl-4">{children}</ol>
+                              ),
+                              li: ({ children }) => (
+                                <li className="mb-1">{children}</li>
+                              ),
+                              strong: ({ children }) => (
+                                <strong className="font-semibold">{children}</strong>
+                              ),
+                              code: ({ children, className }) => {
+                                const isInline = !className;
+                                return isInline ? (
+                                  <code className="rounded bg-muted-foreground/10 px-1 py-0.5 text-xs">
+                                    {children}
+                                  </code>
+                                ) : (
+                                  <code className="block rounded bg-muted-foreground/10 p-2 text-xs overflow-x-auto">
+                                    {children}
+                                  </code>
+                                );
+                              },
+                              table: ({ children }) => (
+                                <div className="my-2 overflow-x-auto">
+                                  <table className="min-w-full divide-y divide-border">
+                                    {children}
+                                  </table>
+                                </div>
+                              ),
+                              th: ({ children }) => (
+                                <th className="px-3 py-2 text-left text-xs font-semibold">
+                                  {children}
+                                </th>
+                              ),
+                              td: ({ children }) => (
+                                <td className="px-3 py-2 text-sm">{children}</td>
+                              ),
+                            }}
+                          >
+                            {text}
+                          </ReactMarkdown>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
