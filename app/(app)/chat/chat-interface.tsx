@@ -175,16 +175,22 @@ export default function ChatInterface({ hasStatements }: ChatInterfaceProps) {
                                 <p className="mb-2 last:mb-0">{children}</p>
                               ),
                               ul: ({ children }) => (
-                                <ul className="mb-2 list-disc pl-4">{children}</ul>
+                                <ul className="mb-2 list-disc pl-4">
+                                  {children}
+                                </ul>
                               ),
                               ol: ({ children }) => (
-                                <ol className="mb-2 list-decimal pl-4">{children}</ol>
+                                <ol className="mb-2 list-decimal pl-4">
+                                  {children}
+                                </ol>
                               ),
                               li: ({ children }) => (
                                 <li className="mb-1">{children}</li>
                               ),
                               strong: ({ children }) => (
-                                <strong className="font-semibold">{children}</strong>
+                                <strong className="font-semibold">
+                                  {children}
+                                </strong>
                               ),
                               code: ({ children, className }) => {
                                 const isInline = !className;
@@ -211,7 +217,9 @@ export default function ChatInterface({ hasStatements }: ChatInterfaceProps) {
                                 </th>
                               ),
                               td: ({ children }) => (
-                                <td className="px-3 py-2 text-sm">{children}</td>
+                                <td className="px-3 py-2 text-sm">
+                                  {children}
+                                </td>
                               ),
                             }}
                           >

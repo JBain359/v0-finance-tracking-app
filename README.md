@@ -22,11 +22,13 @@ A modern, AI-powered personal finance tracking application built with Next.js th
 #### 1. Authentication (Descope)
 
 The application uses Descope for user authentication, providing:
+
 - Secure JWT-based authentication
 - Session management via cookies (`DS` and `DSR`)
 - User profile data (name, email, etc.)
 
 **Key Files:**
+
 - `lib/supabase/auth.ts` - Helper functions to extract Descope user ID from JWT
 - `app/(auth)/signin/page.tsx` - Sign-in page with Descope flow
 
@@ -89,13 +91,14 @@ export async function createClient() {
   const descopeToken = await getDescopeToken();
   return createServerClient(URL, KEY, {
     global: {
-      headers: descopeToken ? { Authorization: `Bearer ${descopeToken}` } : {}
-    }
+      headers: descopeToken ? { Authorization: `Bearer ${descopeToken}` } : {},
+    },
   });
 }
 ```
 
 **Key Files:**
+
 - `lib/supabase/server.ts` - Server-side Supabase client with Descope token
 - `lib/supabase/client.ts` - Client-side Supabase client
 - `supabase/migrations/` - Database migrations including RLS policies
@@ -105,6 +108,7 @@ export async function createClient() {
 The chat feature uses AWS Bedrock with Claude to enable natural language queries over financial data.
 
 **How it works:**
+
 1. User asks a question about their finances
 2. Request is sent to `/api/chat` route
 3. Backend queries Supabase for relevant transaction data
@@ -112,12 +116,14 @@ The chat feature uses AWS Bedrock with Claude to enable natural language queries
 5. Claude analyzes the data and generates natural language responses
 
 **Key Features:**
+
 - Natural language queries ("How much did I spend on groceries?")
 - Automatic data aggregation and analysis
 - Context-aware responses
 - Suggested questions for new users
 
 **Key Files:**
+
 - `app/(app)/chat/page.tsx` - Server component that checks for data availability
 - `app/(app)/chat/chat-interface.tsx` - Client component with chat UI
 - `app/api/chat/route.ts` - API route handling Bedrock integration
@@ -127,6 +133,7 @@ The chat feature uses AWS Bedrock with Claude to enable natural language queries
 Users can upload bank statements (CSV/PDF format) which are automatically processed.
 
 **Upload Flow:**
+
 1. User selects file on `/upload` page
 2. File uploaded to Vercel Blob storage
 3. Statement record created in database
@@ -136,6 +143,7 @@ Users can upload bank statements (CSV/PDF format) which are automatically proces
 7. Statement marked as processed
 
 **CSV Parser Features:**
+
 - Intelligent column detection (supports multiple bank formats)
 - Flexible date parsing (MM/DD/YYYY, YYYY-MM-DD, etc.)
 - Handles separate debit/credit columns or single amount column
@@ -143,6 +151,7 @@ Users can upload bank statements (CSV/PDF format) which are automatically proces
 - Merchant extraction from descriptions
 
 **Key Files:**
+
 - `app/(app)/upload/page.tsx` - Upload interface
 - `app/api/upload/route.ts` - File upload handler
 - `app/api/process/route.ts` - CSV parsing and transaction extraction
@@ -153,6 +162,7 @@ Users can upload bank statements (CSV/PDF format) which are automatically proces
 View, filter, sort, and analyze transactions.
 
 **Features:**
+
 - Paginated table (25 transactions per page)
 - Sortable columns (date, amount)
 - Date range filtering
@@ -160,6 +170,7 @@ View, filter, sort, and analyze transactions.
 - Server-side pagination and sorting for performance
 
 **Key Files:**
+
 - `app/(app)/transactions/page.tsx` - Server component with data fetching
 - `components/transactions/transactions-table.tsx` - Client component with table UI
 - `components/transactions/transactions-filters.tsx` - Filter controls
@@ -207,10 +218,13 @@ supabase/
 ## Key Features
 
 ### 1. Multi-User Data Isolation
+
 Every table has a `user_id` column with RLS policies ensuring users only see their own data. No application-level filtering needed - security is enforced at the database level.
 
 ### 2. Smart Transaction Categorization
+
 Automatic categorization based on merchant names and keywords:
+
 - Groceries (Walmart, Target, Kroger, etc.)
 - Restaurants & Dining
 - Transportation & Gas
@@ -220,13 +234,16 @@ Automatic categorization based on merchant names and keywords:
 - Health & Fitness
 
 ### 3. AI-Powered Insights
+
 Chat with your financial data using natural language:
+
 - Spending analysis by category
 - Monthly trends and comparisons
 - Merchant spending patterns
 - Custom queries
 
 ### 4. Responsive Design
+
 Mobile-first design with Tailwind CSS and smooth animations powered by Framer Motion.
 
 ## Environment Variables
@@ -253,6 +270,7 @@ BLOB_READ_WRITE_TOKEN=your_blob_token
 ## Getting Started
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
@@ -261,11 +279,13 @@ BLOB_READ_WRITE_TOKEN=your_blob_token
    Copy `.env.local.example` to `.env.local` and fill in your credentials.
 
 3. **Run database migrations:**
+
    ```bash
    npx supabase db push
    ```
 
 4. **Start development server:**
+
    ```bash
    npm run dev
    ```
