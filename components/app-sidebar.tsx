@@ -8,6 +8,7 @@ import {
   List,
   MessageSquare,
   Wallet,
+  CreditCard,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,7 @@ import { SlideInLeft } from "@/components/animated-components";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/accounts", label: "Accounts", icon: CreditCard },
   { href: "/upload", label: "Upload", icon: Upload },
   { href: "/transactions", label: "Transactions", icon: List },
   { href: "/chat", label: "Ask AI", icon: MessageSquare },

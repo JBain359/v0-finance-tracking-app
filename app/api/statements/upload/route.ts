@@ -2,10 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { createClient } from "@/lib/supabase/server";
 import { getDescopeUserId } from "@/lib/supabase/auth";
+import { createHash } from "crypto";
+
+async function computeFileHash(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  return createHash("sha256").update(Buffer.from(buffer)).digest("hex");
+}
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
     const userId = await getDescopeUserId();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,10 +18,17 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
-    const sourceType = formData.get("sourceType") as "bank" | "credit_card";
+    const accountId = formData.get("accountId") as string;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    if (!accountId) {
+      return NextResponse.json(
+        { error: "No account selected" },
+        { status: 400 },
+      );
     }
 
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
@@ -27,13 +39,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Upload to Vercel Blob
+    // Compute hash before uploading anything
+    const fileHash = await computeFileHash(file);
+
+    // Check for duplicate before touching Blob storage
+    const supabase = await createClient();
+    const { data: existing } = await supabase
+      .from("statements")
+      .select("id, filename, created_at")
+      .eq("user_id", userId)
+      .eq("file_hash", fileHash)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json(
+        {
+          error: "Duplicate file",
+          message: `This file has already been uploaded`,
+          existingStatement: {
+            id: existing.id,
+            filename: existing.filename,
+            uploadedAt: existing.created_at,
+          },
+        },
+        { status: 409 },
+      );
+    }
+
+    // Only upload to Blob after passing duplicate check
     const blob = await put(`statements/${Date.now()}-${file.name}`, file, {
       access: "private",
     });
 
-    // Create statement record in database with user_id
-    const supabase = await createClient();
     const { data: statement, error } = await supabase
       .from("statements")
       .insert({
@@ -41,7 +78,8 @@ export async function POST(request: NextRequest) {
         filename: file.name,
         blob_pathname: blob.pathname,
         file_type: fileExtension as "csv" | "pdf",
-        source_type: sourceType,
+        account_id: accountId,
+        file_hash: fileHash,
         processed: false,
       })
       .select()
@@ -49,6 +87,18 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Database error:", error);
+
+      // Check if it's a duplicate key violation
+      if (error.code === "23505") {
+        return NextResponse.json(
+          {
+            error: "Duplicate file",
+            message: "This file has already been uploaded to this account",
+          },
+          { status: 409 },
+        );
+      }
+
       return NextResponse.json(
         { error: "Failed to save statement record" },
         { status: 500 },

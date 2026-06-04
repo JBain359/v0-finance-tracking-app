@@ -5,6 +5,7 @@ export interface Statement {
   blob_pathname: string;
   file_type: "csv" | "pdf";
   source_type: "bank" | "credit_card";
+  account_id: string | null;
   uploaded_at: string;
   processed: boolean;
   row_count: number;
@@ -32,6 +33,14 @@ export interface Category {
   color: string | null;
   keywords: string[];
   created_at: string;
+}
+
+export interface Account {
+  id: string;
+  user_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SpendingByCategory {

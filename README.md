@@ -39,6 +39,15 @@ Supabase provides PostgreSQL database with Row Level Security (RLS) for multi-te
 **Database Schema:**
 
 ```sql
+-- Accounts: User-created financial accounts (banks, credit cards)
+CREATE TABLE accounts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Statements: Uploaded bank statement files
 CREATE TABLE statements (
   id UUID PRIMARY KEY,
@@ -46,6 +55,7 @@ CREATE TABLE statements (
   filename TEXT,
   file_type TEXT,
   blob_pathname TEXT,
+  account_id UUID REFERENCES accounts(id) ON DELETE CASCADE,
   processed BOOLEAN,
   row_count INTEGER,
   created_at TIMESTAMP
@@ -182,20 +192,23 @@ app/
 ├── (app)/                 # Authenticated app routes
 │   ├── layout.tsx         # App layout with sidebar
 │   ├── page.tsx           # Dashboard
+│   ├── accounts/          # Account management
 │   ├── upload/            # Statement upload
 │   ├── transactions/      # Transaction list
 │   └── chat/              # AI chat interface
 ├── (auth)/                # Authentication routes
 │   └── signin/            # Sign-in page
 └── api/                   # API routes
+    ├── accounts/          # Account CRUD
     ├── chat/              # Bedrock chat endpoint
-    ├── upload/            # File upload endpoint
+    ├── statements/upload/ # File upload endpoint
     ├── process/           # Transaction processing
     ├── transactions/      # Transaction CRUD
     └── statements/        # Statement CRUD
 
 components/
 ├── app-sidebar.tsx        # Main navigation sidebar
+├── accounts/              # Account management components
 ├── transactions/          # Transaction-related components
 ├── upload/                # Upload-related components
 ├── ui/                    # shadcn/ui components
@@ -211,8 +224,8 @@ lib/
 
 supabase/
 └── migrations/            # SQL migrations
-    ├── 000_cleanup_rls.sql
-    └── 001_add_rls.sql
+    ├── 001_add_rls.sql
+    └── 002_create_accounts.sql
 ```
 
 ## Key Features

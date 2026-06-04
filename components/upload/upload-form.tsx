@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -11,7 +11,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Upload,
   FileText,
@@ -19,17 +25,25 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
+import type { Account } from "@/lib/types";
 
-type SourceType = "bank" | "credit_card";
 type UploadStatus = "idle" | "uploading" | "processing" | "success" | "error";
 
 export function UploadForm() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
-  const [sourceType, setSourceType] = useState<SourceType>("bank");
+  const [accountId, setAccountId] = useState<string>("");
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/accounts")
+      .then((res) => res.json())
+      .then((data) => setAccounts(data))
+      .catch((err) => console.error("Failed to load accounts:", err));
+  }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -58,7 +72,7 @@ export function UploadForm() {
   };
 
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file || !accountId) return;
 
     setStatus("uploading");
     setError(null);
@@ -66,7 +80,7 @@ export function UploadForm() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("sourceType", sourceType);
+      formData.append("accountId", accountId);
 
       const response = await fetch("/api/statements/upload", {
         method: "POST",
@@ -75,6 +89,16 @@ export function UploadForm() {
 
       if (!response.ok) {
         const data = await response.json();
+
+        // Handle duplicate file error specially
+        if (response.status === 409) {
+          setStatus("error");
+          setError(
+            data.message || "This file has already been uploaded to this account"
+          );
+          return;
+        }
+
         throw new Error(data.error || "Upload failed");
       }
 
@@ -160,25 +184,24 @@ export function UploadForm() {
         </div>
 
         <div className="space-y-3">
-          <Label>Statement Type</Label>
-          <RadioGroup
-            value={sourceType}
-            onValueChange={(v) => setSourceType(v as SourceType)}
-            className="flex gap-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="bank" id="bank" />
-              <Label htmlFor="bank" className="cursor-pointer">
-                Bank Statement
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="credit_card" id="credit_card" />
-              <Label htmlFor="credit_card" className="cursor-pointer">
-                Credit Card
-              </Label>
-            </div>
-          </RadioGroup>
+          <Label>Account</Label>
+          <Select value={accountId} onValueChange={setAccountId}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select an account" />
+            </SelectTrigger>
+            <SelectContent>
+              {accounts.map((account) => (
+                <SelectItem key={account.id} value={account.id}>
+                  {account.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {accounts.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No accounts found. Please create an account first.
+            </p>
+          )}
         </div>
 
         {error && (
@@ -190,7 +213,12 @@ export function UploadForm() {
 
         <Button
           onClick={handleUpload}
-          disabled={!file || status === "uploading" || status === "processing"}
+          disabled={
+            !file ||
+            !accountId ||
+            status === "uploading" ||
+            status === "processing"
+          }
           className="w-full"
         >
           {status === "uploading" && (
