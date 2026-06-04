@@ -68,7 +68,7 @@ export function UploadForm() {
       formData.append("file", file);
       formData.append("sourceType", sourceType);
 
-      const response = await fetch("/api/upload", {
+      const response = await fetch("/api/statements/upload", {
         method: "POST",
         body: formData,
       });
