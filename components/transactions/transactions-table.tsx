@@ -74,6 +74,30 @@ export function TransactionsTable({
   const categoryMap = new Map(categories.map((c) => [c.name, c]));
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  // Default color palette for categories not in user's list
+  const defaultColors = [
+    "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6",
+    "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1"
+  ];
+
+  // Build a color map for all categories (including AI-suggested ones)
+  const categoryColorMap = new Map<string, string>();
+  categories.forEach((c) => {
+    categoryColorMap.set(c.name, c.color || "#71717a");
+  });
+
+  // Function to get color for any category
+  const getCategoryColor = (categoryName: string): string => {
+    if (categoryColorMap.has(categoryName)) {
+      return categoryColorMap.get(categoryName)!;
+    }
+    // Generate consistent color for unknown categories
+    const hash = categoryName.split("").reduce((acc, char) => {
+      return char.charCodeAt(0) + ((acc << 5) - acc);
+    }, 0);
+    return defaultColors[Math.abs(hash) % defaultColors.length];
+  };
+
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", newPage.toString());
@@ -185,7 +209,7 @@ export function TransactionsTable({
               // Use effective_category which includes merchant/override categories
               const effectiveCategory = txWithCategory.effective_category || transaction.category || "Uncategorized";
               const categorySource = txWithCategory.category_source;
-              const category = categoryMap.get(effectiveCategory);
+              const categoryColor = getCategoryColor(effectiveCategory);
               const isCredit = transaction.transaction_type === "credit";
 
               return (
@@ -213,7 +237,7 @@ export function TransactionsTable({
                           <div
                             className="h-2 w-2 rounded-full shrink-0"
                             style={{
-                              backgroundColor: category?.color || "#71717a",
+                              backgroundColor: categoryColor,
                             }}
                           />
                           <span className="text-sm truncate">{effectiveCategory}</span>

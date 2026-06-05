@@ -391,7 +391,7 @@ export async function POST(request: NextRequest) {
     // Trigger background categorization for new transactions (non-blocking)
     if (insertedTransactions && insertedTransactions.length > 0 ) {
       // Don't await - let it run in the background
-      await triggerBackgroundCategorization(
+      triggerBackgroundCategorization(
         insertedTransactions,
         userId,
         supabase,
