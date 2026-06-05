@@ -13,6 +13,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   Table,
   TableBody,
   TableCell,
@@ -27,7 +33,7 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
-import type { Transaction, Category } from "@/lib/types";
+import type { Transaction, Category, TransactionWithCategory } from "@/lib/types";
 
 interface TransactionsTableProps {
   transactions: Transaction[];
@@ -175,7 +181,11 @@ export function TransactionsTable({
           </TableHeader>
           <TableBody>
             {transactions.map((transaction) => {
-              const category = categoryMap.get(transaction.category || "Other");
+              const txWithCategory = transaction as TransactionWithCategory;
+              // Use effective_category which includes merchant/override categories
+              const effectiveCategory = txWithCategory.effective_category || transaction.category || "Uncategorized";
+              const categorySource = txWithCategory.category_source;
+              const category = categoryMap.get(effectiveCategory);
               const isCredit = transaction.transaction_type === "credit";
 
               return (
@@ -197,40 +207,43 @@ export function TransactionsTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Select
-                      value={transaction.category || "Other"}
-                      onValueChange={(value) =>
-                        handleCategoryChange(transaction.id, value)
-                      }
-                      disabled={updatingId === transaction.id}
-                    >
-                      <SelectTrigger className="h-8 w-full">
-                        <div className="flex items-center gap-2">
+                    <TooltipProvider>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-1">
                           <div
-                            className="h-2 w-2 rounded-full"
+                            className="h-2 w-2 rounded-full shrink-0"
                             style={{
                               backgroundColor: category?.color || "#71717a",
                             }}
                           />
-                          <SelectValue />
+                          <span className="text-sm truncate">{effectiveCategory}</span>
                         </div>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.name}>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="h-2 w-2 rounded-full"
-                                style={{
-                                  backgroundColor: cat.color || "#71717a",
-                                }}
-                              />
-                              {cat.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        {categorySource === "merchant" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge variant="secondary" className="text-xs h-5 px-1.5 cursor-help">
+                                🏪
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Category from merchant: {transaction.merchant}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        {categorySource === "override" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge variant="secondary" className="text-xs h-5 px-1.5 cursor-help">
+                                📌
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Custom category for this transaction</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </TooltipProvider>
                   </TableCell>
                   <TableCell>
                     <Badge

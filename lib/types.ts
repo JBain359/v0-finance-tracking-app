@@ -84,6 +84,7 @@ export interface TransactionCategoryOverride {
 }
 
 export interface TransactionWithCategory extends Transaction {
-  effective_category: string | null;
-  category_source: "override" | "merchant" | "default" | null;
+  effective_category: string;
+  effective_category_id: string | null;
+  category_source: "override" | "merchant" | "default";
 }

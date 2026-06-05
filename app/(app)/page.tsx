@@ -5,13 +5,13 @@ import type { Transaction, Category } from "@/lib/types";
 async function getDashboardData() {
   const supabase = await createClient();
 
-  // Get transactions from the last 6 months
+  // Get transactions from the last 6 months with effective categories
   // RLS automatically filters by user_id from JWT
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
   const { data: transactions } = await supabase
-    .from("transactions")
+    .from("transactions_with_categories")
     .select("*")
     .gte("date", sixMonthsAgo.toISOString().split("T")[0])
     .order("date", { ascending: false });
@@ -42,17 +42,28 @@ export default async function DashboardPage() {
   const transactionCount = transactions.length;
   const avgTransaction = transactionCount > 0 ? totalSpent / debits.length : 0;
 
-  // Group spending by category
+  // Group spending by category (use effective_category from the view)
   const categoryMap = new Map(categories.map((c) => [c.name, c]));
+
+  // Generate default colors for categories that don't exist in user's categories
+  const defaultColors = [
+    "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6",
+    "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1"
+  ];
+  let colorIndex = 0;
+
   const spendingByCategory = debits.reduce(
     (acc, t) => {
-      const cat = t.category || "Other";
+      // Use effective_category from the view (falls back to transaction.category)
+      const cat = (t as any).effective_category || t.category || "Uncategorized";
       if (!acc[cat]) {
         const category = categoryMap.get(cat);
+        // If no user-defined category, assign a default color
+        const color = category?.color || defaultColors[colorIndex++ % defaultColors.length];
         acc[cat] = {
           category: cat,
           total: 0,
-          color: category?.color || "#71717a",
+          color,
         };
       }
       acc[cat].total += Math.abs(Number(t.amount));

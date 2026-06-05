@@ -38,8 +38,9 @@ async function getTransactions(
   const ascending = sortOrder === "asc";
 
   // RLS automatically filters by user_id from JWT
+  // Use transactions_with_categories view to get effective categories
   let query = supabase
-    .from("transactions")
+    .from("transactions_with_categories")
     .select("*", { count: "exact" })
     .order(sortBy, { ascending });
 
@@ -50,7 +51,8 @@ async function getTransactions(
   }
 
   if (filters.category && filters.category !== "all") {
-    query = query.eq("category", filters.category);
+    // Filter by effective_category which includes merchant and override categories
+    query = query.eq("effective_category", filters.category);
   }
 
   if (filters.type && filters.type !== "all") {

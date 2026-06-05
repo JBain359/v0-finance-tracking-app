@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { Transaction, Category } from "@/lib/types";
+import type { Transaction, Category, TransactionWithCategory } from "@/lib/types";
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
@@ -47,7 +47,9 @@ export function RecentTransactions({
         {transactions.length > 0 ? (
           <div className="space-y-3">
             {transactions.map((transaction) => {
-              const category = categoryMap.get(transaction.category || "Other");
+              const txWithCategory = transaction as TransactionWithCategory;
+              const effectiveCategory = txWithCategory.effective_category || transaction.category || "Uncategorized";
+              const category = categoryMap.get(effectiveCategory);
               const isCredit = transaction.transaction_type === "credit";
 
               return (
@@ -66,9 +68,9 @@ export function RecentTransactions({
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {formatDate(transaction.date)}
-                        {transaction.category && (
+                        {effectiveCategory && (
                           <Badge variant="secondary" className="ml-2 text-xs">
-                            {transaction.category}
+                            {effectiveCategory}
                           </Badge>
                         )}
                       </p>
