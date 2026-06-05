@@ -5,18 +5,20 @@ Use this checklist to migrate your database to the new consolidated schema.
 ## Pre-Migration
 
 - [ ] **Backup existing data** (if you have any)
+
   ```bash
   # If using Supabase
   supabase db dump > backup_$(date +%Y%m%d).sql
-  
+
   # Or with pg_dump
   pg_dump your_database > backup_$(date +%Y%m%d).sql
   ```
 
 - [ ] **Check current state**
+
   ```sql
   -- See what tables exist
-  SELECT table_name FROM information_schema.tables 
+  SELECT table_name FROM information_schema.tables
   WHERE table_schema = 'public';
   ```
 
@@ -30,6 +32,7 @@ Use this checklist to migrate your database to the new consolidated schema.
 ### Option A: Fresh Start (Recommended for New Projects)
 
 - [ ] **Run automated setup**
+
   ```bash
   cd supabase
   ./setup-db.sh
@@ -44,6 +47,7 @@ Use this checklist to migrate your database to the new consolidated schema.
 ### Option B: Existing Database with Data
 
 - [ ] **Reset database** (⚠️ Deletes all data)
+
   ```bash
   supabase db reset
   ```
@@ -58,6 +62,7 @@ Use this checklist to migrate your database to the new consolidated schema.
 ### Check Tables
 
 - [ ] **6 tables exist**
+
   ```sql
   SELECT COUNT(*) FROM information_schema.tables
   WHERE table_schema = 'public' AND table_type = 'BASE TABLE';
@@ -103,6 +108,7 @@ Use this checklist to migrate your database to the new consolidated schema.
 ### Check RLS (Row Level Security)
 
 - [ ] **RLS enabled on all tables**
+
   ```sql
   SELECT tablename, rowsecurity FROM pg_tables
   WHERE schemaname = 'public'
@@ -152,11 +158,13 @@ Use this checklist to migrate your database to the new consolidated schema.
 ### Basic Queries
 
 - [ ] **Query transactions**
+
   ```sql
   SELECT * FROM transactions LIMIT 1;
   ```
 
 - [ ] **Query with effective categories** ← NEW
+
   ```sql
   SELECT
     id,
@@ -182,6 +190,7 @@ Use this checklist to migrate your database to the new consolidated schema.
 ### Insert Test Data
 
 - [ ] **Create test category**
+
   ```sql
   INSERT INTO categories (user_id, name, keywords)
   VALUES ('test-user', 'Groceries', ARRAY['grocery', 'food', 'supermarket'])
@@ -189,6 +198,7 @@ Use this checklist to migrate your database to the new consolidated schema.
   ```
 
 - [ ] **Create test merchant category** ← NEW
+
   ```sql
   INSERT INTO merchant_categories (user_id, merchant, category_name, source)
   VALUES ('test-user', 'Whole Foods', 'Groceries', 'user')
@@ -270,6 +280,7 @@ Use this checklist to migrate your database to the new consolidated schema.
 ## Cleanup (Optional)
 
 - [ ] **Remove old migration files** (if starting fresh)
+
   ```bash
   # Only do this if you don't need the old files
   rm supabase/migrations/001_add_rls.sql
@@ -295,19 +306,21 @@ Use this checklist to migrate your database to the new consolidated schema.
 If something goes wrong:
 
 1. **Restore from backup**
+
    ```bash
    psql your_database < backup_YYYYMMDD.sql
    ```
 
 2. **Or revert specific changes**
+
    ```sql
    -- Drop new tables
    DROP TABLE IF EXISTS transaction_category_overrides CASCADE;
    DROP TABLE IF EXISTS merchant_categories CASCADE;
-   
+
    -- Drop new functions
    DROP FUNCTION IF EXISTS get_transaction_effective_category CASCADE;
-   
+
    -- Drop new view
    DROP VIEW IF EXISTS transactions_with_categories;
    ```

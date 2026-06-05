@@ -47,19 +47,29 @@ export default async function DashboardPage() {
 
   // Generate default colors for categories that don't exist in user's categories
   const defaultColors = [
-    "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6",
-    "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1"
+    "#3b82f6",
+    "#ef4444",
+    "#10b981",
+    "#f59e0b",
+    "#8b5cf6",
+    "#ec4899",
+    "#06b6d4",
+    "#84cc16",
+    "#f97316",
+    "#6366f1",
   ];
   let colorIndex = 0;
 
   const spendingByCategory = debits.reduce(
     (acc, t) => {
       // Use effective_category from the view (falls back to transaction.category)
-      const cat = (t as any).effective_category || t.category || "Uncategorized";
+      const cat =
+        (t as any).effective_category || t.category || "Uncategorized";
       if (!acc[cat]) {
         const category = categoryMap.get(cat);
         // If no user-defined category, assign a default color
-        const color = category?.color || defaultColors[colorIndex++ % defaultColors.length];
+        const color =
+          category?.color || defaultColors[colorIndex++ % defaultColors.length];
         acc[cat] = {
           category: cat,
           total: 0,

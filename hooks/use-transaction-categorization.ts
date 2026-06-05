@@ -55,8 +55,7 @@ export function useTransactionCategorization() {
 
       return result;
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Unknown error";
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
       setError(errorMessage);
       throw err;
     } finally {
@@ -64,9 +63,7 @@ export function useTransactionCategorization() {
     }
   };
 
-  const getCategory = async (
-    transactionId: string,
-  ): Promise<CategoryInfo> => {
+  const getCategory = async (transactionId: string): Promise<CategoryInfo> => {
     try {
       const response = await fetch(
         `/api/transactions/categorize?transactionId=${transactionId}`,
@@ -78,8 +75,7 @@ export function useTransactionCategorization() {
 
       return await response.json();
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Unknown error";
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
       setError(errorMessage);
       throw err;
     }

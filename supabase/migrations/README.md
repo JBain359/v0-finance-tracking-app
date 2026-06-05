@@ -5,19 +5,25 @@
 Run these two files in order:
 
 ### 1. Schema (Tables, Functions, Views)
+
 ```bash
 psql -d your_database < 000_schema.sql
 ```
+
 or with Supabase CLI:
+
 ```bash
 supabase db execute --file 000_schema.sql
 ```
 
 ### 2. Configuration (Indexes, RLS, Triggers)
+
 ```bash
 psql -d your_database < 001_config.sql
 ```
+
 or with Supabase CLI:
+
 ```bash
 supabase db execute --file 001_config.sql
 ```
@@ -37,12 +43,14 @@ supabase db push
 ## What's in Each File
 
 ### `000_schema.sql` (Run First)
+
 - All table definitions
 - Database functions
 - Views
 - Core schema structure
 
 **Tables created:**
+
 - `accounts` - User bank/credit card accounts
 - `categories` - Transaction categories with keywords
 - `statements` - Uploaded statement files
@@ -51,6 +59,7 @@ supabase db push
 - `transaction_category_overrides` - Transaction-specific category overrides
 
 ### `001_config.sql` (Run Second)
+
 - Indexes for performance
 - Row Level Security (RLS) policies
 - Triggers for automatic timestamp updates
@@ -60,6 +69,7 @@ supabase db push
 ## Legacy Migration Files
 
 The following files have been **archived** in `legacy_backup/` folder:
+
 - ~~`001_add_rls.sql`~~ → Now in `001_config.sql`
 - ~~`002_free_query.sql`~~ → Now in `000_schema.sql`
 - ~~`003_merchant_categories.sql`~~ → Now split between `000_schema.sql` and `001_config.sql`
@@ -73,9 +83,9 @@ After running both migrations, verify the setup:
 
 ```sql
 -- Check tables exist
-SELECT table_name 
-FROM information_schema.tables 
-WHERE table_schema = 'public' 
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
 ORDER BY table_name;
 
 -- Should see:
@@ -88,14 +98,14 @@ ORDER BY table_name;
 -- transactions_with_categories (view)
 
 -- Check RLS is enabled
-SELECT tablename, rowsecurity 
-FROM pg_tables 
+SELECT tablename, rowsecurity
+FROM pg_tables
 WHERE schemaname = 'public';
 
 -- Check indexes
-SELECT indexname, tablename 
-FROM pg_indexes 
-WHERE schemaname = 'public' 
+SELECT indexname, tablename
+FROM pg_indexes
+WHERE schemaname = 'public'
 ORDER BY tablename, indexname;
 ```
 
@@ -120,7 +130,9 @@ SELECT execute_query('SELECT COUNT(*) as total FROM transactions');
 ## Troubleshooting
 
 ### "relation already exists" errors
+
 If tables already exist from previous migrations:
+
 ```sql
 -- Option 1: Drop all tables (⚠️ deletes all data)
 DROP TABLE IF EXISTS transaction_category_overrides CASCADE;
@@ -134,7 +146,9 @@ DROP TABLE IF EXISTS accounts CASCADE;
 ```
 
 ### RLS blocking queries
+
 Make sure you're authenticated with proper JWT:
+
 ```sql
 -- Temporarily disable RLS for testing (dev only!)
 ALTER TABLE transactions DISABLE ROW LEVEL SECURITY;
@@ -144,6 +158,7 @@ ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ```
 
 ### Check policy definitions
+
 ```sql
 SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual
 FROM pg_policies

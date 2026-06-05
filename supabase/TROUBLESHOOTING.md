@@ -5,6 +5,7 @@
 ### "Syntax error at or near 'NOT'" with ALTER TABLE ADD CONSTRAINT
 
 **Error:**
+
 ```
 ERROR: 42601: syntax error at or near "NOT"
 LINE 11: ALTER TABLE statements ADD CONSTRAINT IF NOT EXISTS unique_user_file_hash
@@ -15,11 +16,13 @@ LINE 11: ALTER TABLE statements ADD CONSTRAINT IF NOT EXISTS unique_user_file_ha
 **Fixed in:** `001_config.sql` (uses DO block instead)
 
 **To verify fix:**
+
 ```bash
 grep -A 5 "CONSTRAINT" supabase/migrations/001_config.sql
 ```
 
 Should show:
+
 ```sql
 DO $$
 BEGIN
@@ -39,6 +42,7 @@ END $$;
 ### 1. Migration Fails with "relation already exists"
 
 **Error:**
+
 ```
 ERROR: relation "transactions" already exists
 ```
@@ -46,11 +50,13 @@ ERROR: relation "transactions" already exists
 **Cause:** Tables already exist in your database
 
 **Solution A - Fresh Start (⚠️ Deletes all data):**
+
 ```bash
 supabase db reset
 ```
 
 **Solution B - Manual cleanup:**
+
 ```sql
 -- Drop tables in reverse dependency order
 DROP TABLE IF EXISTS transaction_category_overrides CASCADE;
@@ -64,6 +70,7 @@ DROP TABLE IF EXISTS accounts CASCADE;
 ```
 
 **Solution C - Skip schema, run config only:**
+
 ```bash
 # If tables exist but just need configuration
 supabase db execute --file migrations/001_config.sql
@@ -74,6 +81,7 @@ supabase db execute --file migrations/001_config.sql
 ### 2. RLS Policy Blocks All Queries
 
 **Error:**
+
 ```
 Row level security policy violation
 ```
@@ -81,6 +89,7 @@ Row level security policy violation
 **Cause:** Not authenticated or wrong user_id in JWT
 
 **Debug:**
+
 ```sql
 -- Check current JWT
 SELECT auth.jwt() ->> 'sub' AS user_id;
@@ -93,6 +102,7 @@ SELECT DISTINCT user_id FROM transactions;
 ```
 
 **Fix:**
+
 - Ensure Descope authentication is working
 - Verify JWT contains 'sub' claim
 - Check user_id in tables matches JWT sub
@@ -102,11 +112,13 @@ SELECT DISTINCT user_id FROM transactions;
 ### 3. Supabase CLI Not Found
 
 **Error:**
+
 ```
 supabase: command not found
 ```
 
 **Install:**
+
 ```bash
 # macOS
 brew install supabase/tap/supabase
@@ -125,11 +137,13 @@ supabase --version
 ### 4. Database Not Linked
 
 **Error:**
+
 ```
 Error: Project not linked
 ```
 
 **Fix:**
+
 ```bash
 # Link to existing project
 supabase link --project-ref your-project-ref
@@ -146,11 +160,13 @@ supabase status
 ### 5. Function or View Already Exists
 
 **Error:**
+
 ```
 ERROR: function "get_transaction_effective_category" already exists
 ```
 
 **Solution:**
+
 ```sql
 -- Drop and recreate (safe with OR REPLACE in migration)
 DROP FUNCTION IF EXISTS get_transaction_effective_category CASCADE;
@@ -164,6 +180,7 @@ DROP VIEW IF EXISTS transactions_with_categories;
 ### 6. Index Already Exists
 
 **Error:**
+
 ```
 ERROR: relation "transactions_user_id_idx" already exists
 ```
@@ -171,6 +188,7 @@ ERROR: relation "transactions_user_id_idx" already exists
 **Cause:** Indexes from previous migration
 
 **Solution:** Migrations use `CREATE INDEX IF NOT EXISTS`, so this shouldn't happen. If it does:
+
 ```sql
 -- Check existing indexes
 SELECT indexname FROM pg_indexes WHERE schemaname = 'public';
@@ -184,11 +202,13 @@ DROP INDEX IF EXISTS transactions_user_id_idx;
 ### 7. Permission Denied on Tables
 
 **Error:**
+
 ```
 ERROR: permission denied for table transactions
 ```
 
 **Check:**
+
 ```sql
 -- See table owner
 SELECT tablename, tableowner FROM pg_tables WHERE schemaname = 'public';
@@ -207,6 +227,7 @@ GRANT ALL ON ALL TABLES IN SCHEMA public TO your_user;
 ### Check Migration File Syntax
 
 Before running migrations:
+
 ```bash
 cd supabase
 ./validate-sql.sh
@@ -215,6 +236,7 @@ cd supabase
 ### Verify Database State
 
 After running migrations:
+
 ```bash
 # Check tables
 psql -d your_db -c "\dt"
@@ -265,24 +287,29 @@ SELECT COUNT(*) FROM transactions;
 If automated script fails, run manually:
 
 ### Step 1: Create Schema
+
 ```bash
 supabase db execute --file migrations/000_schema.sql
 ```
 
 **Check for errors:**
+
 - "already exists" → OK, skip and continue
 - Syntax errors → Check file, fix, retry
 
 ### Step 2: Apply Configuration
+
 ```bash
 supabase db execute --file migrations/001_config.sql
 ```
 
 **Check for errors:**
+
 - "already exists" → OK, skip and continue
 - Policy violations → Check RLS settings
 
 ### Step 3: Verify
+
 ```bash
 # Run verification queries from MIGRATION_CHECKLIST.md
 ```
@@ -346,6 +373,7 @@ WHERE tc.constraint_type = 'FOREIGN KEY'
 ### Create an Issue
 
 Include:
+
 - Error message (full text)
 - Which migration file (000 or 001)
 - Line number from error

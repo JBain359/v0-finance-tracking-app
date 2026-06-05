@@ -7,7 +7,7 @@ This document describes the transaction categorization system, including how mer
 The categorization system uses a multi-tier approach to assign categories to transactions:
 
 1. **Transaction-specific overrides** (highest priority)
-2. **Merchant-level categories** 
+2. **Merchant-level categories**
 3. **Keyword matching**
 4. **AI categorization** (fallback for unknown merchants)
 5. **Default/Uncategorized** (lowest priority)
@@ -75,6 +75,7 @@ When displaying transactions, the effective category is determined by:
 ```
 
 This is implemented in:
+
 - `lib/categorization-service.ts` - `getTransactionCategory()`
 - `supabase/migrations/004_transaction_category_view.sql` - Database view
 
@@ -95,11 +96,13 @@ For transactions with unknown merchants:
 Users can update categories in two ways:
 
 #### Option A: Transaction-specific
+
 - Apply to **this transaction only**
 - Creates/updates record in `transaction_category_overrides`
 - Other transactions from same merchant are unaffected
 
 #### Option B: Merchant-level
+
 - Apply to **all transactions from this merchant**
 - Creates/updates record in `merchant_categories` with `source='user'`
 - Removes any transaction-specific override for this transaction
@@ -112,6 +115,7 @@ Users can update categories in two ways:
 Update category for a transaction.
 
 **Request:**
+
 ```json
 {
   "transactionId": "uuid",
@@ -123,6 +127,7 @@ Update category for a transaction.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -136,6 +141,7 @@ Update category for a transaction.
 Get effective category for a transaction.
 
 **Response:**
+
 ```json
 {
   "category_name": "Groceries",
@@ -150,6 +156,7 @@ Get effective category for a transaction.
 Process uploaded statement and trigger AI categorization.
 
 **AI Categorization:**
+
 - Automatically runs in background after transactions are inserted
 - Categorizes unique merchants only (not every transaction)
 - Uses Claude Haiku 4 via Vercel AI SDK (fast & cost-effective)
@@ -163,10 +170,11 @@ Process uploaded statement and trigger AI categorization.
 Custom hook for managing categorization.
 
 ```tsx
-import { useTransactionCategorization } from '@/hooks/use-transaction-categorization';
+import { useTransactionCategorization } from "@/hooks/use-transaction-categorization";
 
 function MyComponent() {
-  const { updateCategory, getCategory, isUpdating, error } = useTransactionCategorization();
+  const { updateCategory, getCategory, isUpdating, error } =
+    useTransactionCategorization();
 
   const handleUpdate = async () => {
     await updateCategory({
@@ -174,7 +182,7 @@ function MyComponent() {
       categoryName: "Groceries",
       categoryId: "uuid",
       scope: "merchant",
-      merchant: "Whole Foods"
+      merchant: "Whole Foods",
     });
   };
 }
@@ -185,7 +193,7 @@ function MyComponent() {
 Dialog component for category updates with transaction/merchant scope selection.
 
 ```tsx
-import { CategoryUpdateDialog } from '@/components/category-update-dialog';
+import { CategoryUpdateDialog } from "@/components/category-update-dialog";
 
 <CategoryUpdateDialog
   transaction={transaction}
@@ -195,7 +203,7 @@ import { CategoryUpdateDialog } from '@/components/category-update-dialog';
   onSuccess={() => {
     // Refresh transaction list
   }}
-/>
+/>;
 ```
 
 ## Implementation Guide
@@ -206,9 +214,9 @@ import { CategoryUpdateDialog } from '@/components/category-update-dialog';
 
 ```typescript
 const { data } = await supabase
-  .from('transactions_with_categories')
-  .select('*')
-  .order('date', { ascending: false });
+  .from("transactions_with_categories")
+  .select("*")
+  .order("date", { ascending: false });
 
 // Each row includes:
 // - effective_category: The category to display
@@ -219,14 +227,14 @@ const { data } = await supabase
 2. Or use the service function:
 
 ```typescript
-import { getTransactionCategory } from '@/lib/categorization-service';
+import { getTransactionCategory } from "@/lib/categorization-service";
 
 const result = await getTransactionCategory(
   transactionId,
   merchant,
   description,
   userId,
-  supabase
+  supabase,
 );
 
 console.log(result.category_name); // "Groceries"
@@ -236,17 +244,15 @@ console.log(result.source); // "merchant"
 ### To add category update UI:
 
 ```tsx
-import { CategoryUpdateDialog } from '@/components/category-update-dialog';
+import { CategoryUpdateDialog } from "@/components/category-update-dialog";
 
 function TransactionRow({ transaction, categories }) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
     <>
-      <button onClick={() => setDialogOpen(true)}>
-        Change Category
-      </button>
-      
+      <button onClick={() => setDialogOpen(true)}>Change Category</button>
+
       <CategoryUpdateDialog
         transaction={transaction}
         categories={categories}

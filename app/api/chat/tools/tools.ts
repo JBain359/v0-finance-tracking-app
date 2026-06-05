@@ -414,7 +414,7 @@ export const executeQuery = {
             "Only SELECT queries are permitted. Mutations (INSERT, UPDATE, DELETE, DROP, etc.) are not allowed.",
         };
       }
- 
+
       // Block common mutation keywords as a second layer of defense
       const forbiddenKeywords = [
         /\binsert\b/i,
@@ -434,23 +434,23 @@ export const executeQuery = {
           };
         }
       }
- 
+
       const supabase = await createClient();
- 
+
       const { data, error } = await supabase.rpc("execute_query", {
         query_text: sql,
         query_params: params ?? [],
       });
- 
+
       if (error) {
         console.error("executeQuery DB error:", error);
         return { error: error.message };
       }
- 
+
       if (!data || (Array.isArray(data) && data.length === 0)) {
         return { rows: [], count: 0, message: "Query returned no results." };
       }
- 
+
       return {
         rows: data,
         count: Array.isArray(data) ? data.length : 1,

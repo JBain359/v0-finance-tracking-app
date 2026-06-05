@@ -94,7 +94,8 @@ export function UploadForm() {
         if (response.status === 409) {
           setStatus("error");
           setError(
-            data.message || "This file has already been uploaded to this account"
+            data.message ||
+              "This file has already been uploaded to this account",
           );
           return;
         }

@@ -8,7 +8,7 @@ This system implements intelligent merchant categorization for financial transac
 ✅ **Transaction-specific overrides** - Override category for individual transactions  
 ✅ **AI-powered categorization** - Automatic categorization for unknown merchants (non-blocking)  
 ✅ **Keyword matching** - Fast categorization based on user-defined keywords  
-✅ **Background processing** - AI categorization happens asynchronously without blocking uploads  
+✅ **Background processing** - AI categorization happens asynchronously without blocking uploads
 
 ## What's Been Created
 
@@ -83,6 +83,7 @@ This system implements intelligent merchant categorization for financial transac
 ### 1. Run Database Migrations
 
 **Quick Setup (recommended):**
+
 ```bash
 # Run the automated setup script
 cd supabase
@@ -90,6 +91,7 @@ cd supabase
 ```
 
 **Manual Setup:**
+
 ```bash
 # Option A: Using Supabase CLI
 supabase db reset  # This will run all migrations
@@ -108,10 +110,12 @@ See `supabase/migrations/README.md` for detailed migration documentation.
 ### 2. Verify Database Setup
 
 Check that the following tables exist:
+
 - `merchant_categories`
 - `transaction_category_overrides`
 
 And that the view exists:
+
 - `transactions_with_categories`
 
 ```sql
@@ -129,15 +133,17 @@ To use the new categorization dialog in your transactions table:
 import { TransactionRowWithCategorization } from "./transaction-row-with-categorization";
 
 // Replace the existing transaction row rendering with:
-{transactions.map((transaction) => (
-  <TransactionRowWithCategorization
-    key={transaction.id}
-    transaction={transaction}
-    categories={categories}
-    categoryMap={categoryMap}
-    onUpdate={() => router.refresh()}
-  />
-))}
+{
+  transactions.map((transaction) => (
+    <TransactionRowWithCategorization
+      key={transaction.id}
+      transaction={transaction}
+      categories={categories}
+      categoryMap={categoryMap}
+      onUpdate={() => router.refresh()}
+    />
+  ));
+}
 ```
 
 ### 4. Test the System
@@ -173,7 +179,7 @@ curl -X POST http://localhost:3000/api/categorize-ai \
 ### Example 1: Update Category for One Transaction
 
 ```typescript
-import { useTransactionCategorization } from '@/hooks/use-transaction-categorization';
+import { useTransactionCategorization } from "@/hooks/use-transaction-categorization";
 
 const { updateCategory } = useTransactionCategorization();
 
@@ -190,10 +196,10 @@ await updateCategory({
 ```typescript
 await updateCategory({
   transactionId: "123",
-  categoryName: "Groceries", 
+  categoryName: "Groceries",
   categoryId: "cat-456",
   scope: "merchant",
-  merchant: "Whole Foods"
+  merchant: "Whole Foods",
 });
 // This affects all transactions from "Whole Foods"
 ```
@@ -204,9 +210,9 @@ await updateCategory({
 const supabase = createClient();
 
 const { data } = await supabase
-  .from('transactions_with_categories')
-  .select('*')
-  .order('date', { ascending: false });
+  .from("transactions_with_categories")
+  .select("*")
+  .order("date", { ascending: false });
 
 // Each transaction includes:
 // - effective_category: The category to display
@@ -270,6 +276,7 @@ Check categorization priority:
 ## Support
 
 For questions or issues, refer to:
+
 - `docs/CATEGORIZATION.md` - Detailed technical documentation
 - Database migrations in `supabase/migrations/`
 - Example components in `components/transactions/`

@@ -44,7 +44,9 @@ export function CategoryUpdateDialog({
   const handleSubmit = async () => {
     if (!selectedCategoryId) return;
 
-    const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
+    const selectedCategory = categories.find(
+      (c) => c.id === selectedCategoryId,
+    );
     if (!selectedCategory) return;
 
     try {
@@ -86,7 +88,9 @@ export function CategoryUpdateDialog({
               <SelectContent>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
-                    {category.icon && <span className="mr-2">{category.icon}</span>}
+                    {category.icon && (
+                      <span className="mr-2">{category.icon}</span>
+                    )}
                     {category.name}
                   </SelectItem>
                 ))}
@@ -97,7 +101,10 @@ export function CategoryUpdateDialog({
           {transaction.merchant && (
             <div className="space-y-2">
               <Label>Apply to</Label>
-              <RadioGroup value={scope} onValueChange={(v) => setScope(v as any)}>
+              <RadioGroup
+                value={scope}
+                onValueChange={(v) => setScope(v as any)}
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="transaction" id="transaction" />
                   <Label htmlFor="transaction" className="font-normal">
@@ -108,18 +115,16 @@ export function CategoryUpdateDialog({
                   <RadioGroupItem value="merchant" id="merchant" />
                   <Label htmlFor="merchant" className="font-normal">
                     All transactions from{" "}
-                    <span className="font-semibold">{transaction.merchant}</span>
+                    <span className="font-semibold">
+                      {transaction.merchant}
+                    </span>
                   </Label>
                 </div>
               </RadioGroup>
             </div>
           )}
 
-          {error && (
-            <div className="text-sm text-red-500">
-              {error}
-            </div>
-          )}
+          {error && <div className="text-sm text-red-500">{error}</div>}
         </div>
 
         <DialogFooter>

@@ -87,9 +87,7 @@ export function AddAccountModal({ open, onOpenChange }: AddAccountModalProps) {
                 disabled={isLoading}
               />
             </div>
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
           <DialogFooter>
             <Button

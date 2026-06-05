@@ -33,7 +33,11 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
-import type { Transaction, Category, TransactionWithCategory } from "@/lib/types";
+import type {
+  Transaction,
+  Category,
+  TransactionWithCategory,
+} from "@/lib/types";
 
 interface TransactionsTableProps {
   transactions: Transaction[];
@@ -76,8 +80,16 @@ export function TransactionsTable({
 
   // Default color palette for categories not in user's list
   const defaultColors = [
-    "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6",
-    "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1"
+    "#3b82f6",
+    "#ef4444",
+    "#10b981",
+    "#f59e0b",
+    "#8b5cf6",
+    "#ec4899",
+    "#06b6d4",
+    "#84cc16",
+    "#f97316",
+    "#6366f1",
   ];
 
   // Build a color map for all categories (including AI-suggested ones)
@@ -207,7 +219,10 @@ export function TransactionsTable({
             {transactions.map((transaction) => {
               const txWithCategory = transaction as TransactionWithCategory;
               // Use effective_category which includes merchant/override categories
-              const effectiveCategory = txWithCategory.effective_category || transaction.category || "Uncategorized";
+              const effectiveCategory =
+                txWithCategory.effective_category ||
+                transaction.category ||
+                "Uncategorized";
               const categorySource = txWithCategory.category_source;
               const categoryColor = getCategoryColor(effectiveCategory);
               const isCredit = transaction.transaction_type === "credit";
@@ -240,24 +255,34 @@ export function TransactionsTable({
                               backgroundColor: categoryColor,
                             }}
                           />
-                          <span className="text-sm truncate">{effectiveCategory}</span>
+                          <span className="text-sm truncate">
+                            {effectiveCategory}
+                          </span>
                         </div>
                         {categorySource === "merchant" && (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Badge variant="secondary" className="text-xs h-5 px-1.5 cursor-help">
+                              <Badge
+                                variant="secondary"
+                                className="text-xs h-5 px-1.5 cursor-help"
+                              >
                                 🏪
                               </Badge>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Category from merchant: {transaction.merchant}</p>
+                              <p>
+                                Category from merchant: {transaction.merchant}
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         )}
                         {categorySource === "override" && (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Badge variant="secondary" className="text-xs h-5 px-1.5 cursor-help">
+                              <Badge
+                                variant="secondary"
+                                className="text-xs h-5 px-1.5 cursor-help"
+                              >
                                 📌
                               </Badge>
                             </TooltipTrigger>

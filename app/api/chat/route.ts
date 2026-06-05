@@ -7,7 +7,7 @@ import {
   getSpendingSummary,
   getTopMerchants,
   searchTransactions,
-  executeQuery
+  executeQuery,
 } from "./tools/tools";
 
 export async function POST(request: Request) {

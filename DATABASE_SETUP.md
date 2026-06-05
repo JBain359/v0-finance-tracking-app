@@ -14,6 +14,7 @@ That's it! The script will guide you through the process.
 ## What Gets Created
 
 ### 📊 Tables (6)
+
 ```
 accounts
   ├── Basic account info (name, timestamps)
@@ -44,19 +45,23 @@ transaction_category_overrides
 ```
 
 ### 🔧 Functions (3)
+
 - **`update_updated_at_column()`** - Auto-timestamps
 - **`get_transaction_effective_category()`** - Smart category lookup
 - **`execute_query()`** - Safe free-form queries
 
 ### 👁️ Views (1)
+
 - **`transactions_with_categories`** - Transactions with effective categories computed
 
 ### 🔒 Security
+
 - **RLS enabled** on all 6 tables
 - **24 policies** (4 per table: SELECT, INSERT, UPDATE, DELETE)
 - **JWT-based auth** (Descope integration)
 
 ### ⚡ Performance
+
 - **13+ indexes** across all tables
 - **3 triggers** for auto-updates
 
@@ -87,6 +92,7 @@ supabase/
 If you prefer to run migrations manually:
 
 ### Option 1: Supabase CLI
+
 ```bash
 # Automated (runs all migrations)
 supabase db reset
@@ -97,12 +103,14 @@ supabase db execute --file migrations/001_config.sql
 ```
 
 ### Option 2: Direct SQL
+
 ```bash
 psql -d your_database -f migrations/000_schema.sql
 psql -d your_database -f migrations/001_config.sql
 ```
 
 ### Option 3: Supabase Dashboard
+
 1. Go to SQL Editor in Supabase Dashboard
 2. Copy contents of `000_schema.sql` → Run
 3. Copy contents of `001_config.sql` → Run
@@ -131,12 +139,14 @@ SELECT * FROM transactions_with_categories LIMIT 1;
 ## What This Enables
 
 ### ✅ Core Features
+
 - Upload bank/credit card statements (CSV/PDF)
 - Parse and store transactions
 - Categorize transactions
 - View spending analytics
 
 ### ✨ New Merchant Categorization Features
+
 - **Auto-categorize** transactions by merchant
 - **AI-powered** categorization for unknown merchants
 - **Choose scope** when updating:
@@ -154,6 +164,7 @@ SELECT * FROM transactions_with_categories LIMIT 1;
 ## Next Steps
 
 1. **✅ Run Setup**
+
    ```bash
    cd supabase && ./setup-db.sh
    ```
@@ -219,9 +230,11 @@ For detailed troubleshooting, see **[`supabase/TROUBLESHOOTING.md`](supabase/TRO
 **Quick fixes:**
 
 **Syntax error with CONSTRAINT:**
+
 - ✅ Fixed in `001_config.sql` - pull latest version
 
 **Setup script fails:**
+
 ```bash
 # Check if Supabase CLI is installed
 supabase --version
@@ -231,16 +244,19 @@ brew install supabase/tap/supabase
 ```
 
 **"Permission denied" on setup-db.sh:**
+
 ```bash
 chmod +x supabase/setup-db.sh
 ```
 
 **"Table already exists" errors:**
+
 ```bash
 supabase db reset  # ⚠️ Deletes all data
 ```
 
 **RLS blocking queries:**
+
 ```sql
 SELECT auth.jwt() ->> 'sub' AS user_id;  -- Check auth
 ```

@@ -107,7 +107,9 @@ export function AccountsTable({ accounts }: AccountsTableProps) {
               <TableBody>
                 {accounts.map((account) => (
                   <TableRow key={account.id}>
-                    <TableCell className="font-medium">{account.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {account.name}
+                    </TableCell>
                     <TableCell className="text-muted-foreground">
                       {formatDate(account.created_at)}
                     </TableCell>
@@ -138,10 +140,7 @@ export function AccountsTable({ accounts }: AccountsTableProps) {
         </CardContent>
       </Card>
 
-      <AddAccountModal
-        open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
-      />
+      <AddAccountModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
 
       {editingAccount && (
         <EditAccountModal

@@ -23,6 +23,7 @@ supabase/
 ## What Changed
 
 ### Before (4 Files)
+
 ```
 001_add_rls.sql
 002_free_query.sql
@@ -31,6 +32,7 @@ supabase/
 ```
 
 ### After (2 Files) ✨
+
 ```
 000_schema.sql      (all structure)
 001_config.sql      (all configuration)
@@ -43,18 +45,21 @@ supabase/
 ## Run Migrations
 
 ### Quick Setup
+
 ```bash
 cd supabase
 ./setup-db.sh
 ```
 
 ### Manual Setup
+
 ```bash
 supabase db execute --file migrations/000_schema.sql
 supabase db execute --file migrations/001_config.sql
 ```
 
 ### Automated (Supabase CLI)
+
 ```bash
 supabase db reset
 ```
@@ -64,6 +69,7 @@ supabase db reset
 ## What Gets Created
 
 ### ✅ Tables (6)
+
 - `accounts`
 - `categories`
 - `statements`
@@ -72,14 +78,17 @@ supabase db reset
 - `transaction_category_overrides` ← NEW
 
 ### ✅ Functions (3)
+
 - `update_updated_at_column()`
 - `get_transaction_effective_category()` ← NEW
 - `execute_query()`
 
 ### ✅ Views (1)
+
 - `transactions_with_categories` ← NEW
 
 ### ✅ Configuration
+
 - 13+ indexes
 - 24 RLS policies (4 per table)
 - 3 auto-update triggers
@@ -91,6 +100,7 @@ supabase db reset
 Old migration files have been moved to `legacy_backup/` folder.
 
 **Can you delete them?**
+
 - ✅ **Yes** - If starting fresh
 - ✅ **Yes** - If already migrated to new system
 - ⚠️ **Keep** - If you want to reference old migrations
@@ -120,14 +130,14 @@ Expected: **6 tables**
 
 ## Status
 
-| Item | Status |
-|------|--------|
-| Schema consolidated | ✅ Complete |
-| Config consolidated | ✅ Complete |
-| Syntax errors fixed | ✅ Fixed (CONSTRAINT issue) |
-| Legacy files archived | ✅ Backed up |
-| Documentation updated | ✅ Complete |
-| Setup script ready | ✅ Ready |
+| Item                  | Status                      |
+| --------------------- | --------------------------- |
+| Schema consolidated   | ✅ Complete                 |
+| Config consolidated   | ✅ Complete                 |
+| Syntax errors fixed   | ✅ Fixed (CONSTRAINT issue) |
+| Legacy files archived | ✅ Backed up                |
+| Documentation updated | ✅ Complete                 |
+| Setup script ready    | ✅ Ready                    |
 
 ---
 

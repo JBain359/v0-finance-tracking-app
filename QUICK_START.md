@@ -3,17 +3,20 @@
 ## Setup Database (Choose One)
 
 ### Option 1: Automated Setup (Easiest)
+
 ```bash
 cd supabase
 ./setup-db.sh
 ```
 
 ### Option 2: Supabase CLI Reset
+
 ```bash
 supabase db reset
 ```
 
 ### Option 3: Manual (Two Commands)
+
 ```bash
 supabase db execute --file migrations/000_schema.sql
 supabase db execute --file migrations/001_config.sql
@@ -33,6 +36,7 @@ ORDER BY table_name;
 ```
 
 Expected output:
+
 ```
 accounts
 categories
@@ -53,7 +57,7 @@ SELECT * FROM transactions_with_categories LIMIT 1;
 
 ---
 
-## Error? 
+## Error?
 
 **Got a syntax error?** → See [`supabase/TROUBLESHOOTING.md`](supabase/TROUBLESHOOTING.md)
 
@@ -75,13 +79,13 @@ SELECT * FROM transactions_with_categories LIMIT 1;
 
 ## File Reference
 
-| File | Purpose |
-|------|---------|
-| **[DATABASE_SETUP.md](DATABASE_SETUP.md)** | Complete setup guide |
-| **[MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md)** | Verification checklist |
-| **[supabase/TROUBLESHOOTING.md](supabase/TROUBLESHOOTING.md)** | Fix common errors |
-| **[SETUP_CATEGORIZATION.md](SETUP_CATEGORIZATION.md)** | How to use the system |
-| **[docs/CATEGORIZATION.md](docs/CATEGORIZATION.md)** | API documentation |
+| File                                                           | Purpose                |
+| -------------------------------------------------------------- | ---------------------- |
+| **[DATABASE_SETUP.md](DATABASE_SETUP.md)**                     | Complete setup guide   |
+| **[MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md)**           | Verification checklist |
+| **[supabase/TROUBLESHOOTING.md](supabase/TROUBLESHOOTING.md)** | Fix common errors      |
+| **[SETUP_CATEGORIZATION.md](SETUP_CATEGORIZATION.md)**         | How to use the system  |
+| **[docs/CATEGORIZATION.md](docs/CATEGORIZATION.md)**           | API documentation      |
 
 ---
 
