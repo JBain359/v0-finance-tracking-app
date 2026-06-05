@@ -1,7 +1,5 @@
 import { streamText, tool, convertToModelMessages, stepCountIs } from "ai";
 import { bedrock } from "@ai-sdk/amazon-bedrock";
-import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
 import {
   compareMonths,
   getMonthlySpending,
@@ -9,6 +7,7 @@ import {
   getSpendingSummary,
   getTopMerchants,
   searchTransactions,
+  executeQuery
 } from "./tools/tools";
 
 export async function POST(request: Request) {
@@ -68,6 +67,12 @@ After using whatever tools necessary, please then present your findings back to 
         description: "Compare spending between two months",
         inputSchema: compareMonths.schema,
         execute: compareMonths.function,
+      }),
+
+      freeQuery: tool({
+        description: "Compare spending between two months",
+        inputSchema: executeQuery.schema,
+        execute: executeQuery.function,
       }),
     },
     stopWhen: stepCountIs(5),

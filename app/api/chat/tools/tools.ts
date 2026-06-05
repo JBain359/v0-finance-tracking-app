@@ -385,3 +385,79 @@ export const compareMonths = {
     }
   },
 };
+
+export const executeQuery = {
+  schema: z.object({
+    sql: z
+      .string()
+      .describe(
+        "A raw SQL SELECT query to run against the transactions database. Must be a read-only SELECT statement.",
+      ),
+    params: z
+      .array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
+      .optional()
+      .describe("Optional positional parameters ($1, $2, ...) for the query"),
+  }),
+  function: async ({
+    sql,
+    params,
+  }: {
+    sql: string;
+    params?: (string | number | boolean | null)[] | undefined;
+  }) => {
+    try {
+      // Enforce read-only: reject anything that isn't a SELECT
+      const normalized = sql.trim().toLowerCase();
+      if (!normalized.startsWith("select")) {
+        return {
+          error:
+            "Only SELECT queries are permitted. Mutations (INSERT, UPDATE, DELETE, DROP, etc.) are not allowed.",
+        };
+      }
+ 
+      // Block common mutation keywords as a second layer of defense
+      const forbiddenKeywords = [
+        /\binsert\b/i,
+        /\bupdate\b/i,
+        /\bdelete\b/i,
+        /\bdrop\b/i,
+        /\btruncate\b/i,
+        /\balter\b/i,
+        /\bcreate\b/i,
+        /\bgrant\b/i,
+        /\brevoke\b/i,
+      ];
+      for (const pattern of forbiddenKeywords) {
+        if (pattern.test(sql)) {
+          return {
+            error: `Query contains a forbidden keyword. Only read-only SELECT queries are allowed.`,
+          };
+        }
+      }
+ 
+      const supabase = await createClient();
+ 
+      const { data, error } = await supabase.rpc("execute_query", {
+        query_text: sql,
+        query_params: params ?? [],
+      });
+ 
+      if (error) {
+        console.error("executeQuery DB error:", error);
+        return { error: error.message };
+      }
+ 
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        return { rows: [], count: 0, message: "Query returned no results." };
+      }
+ 
+      return {
+        rows: data,
+        count: Array.isArray(data) ? data.length : 1,
+      };
+    } catch (e) {
+      console.error("executeQuery error:", e);
+      return { error: String(e) };
+    }
+  },
+};
