@@ -60,3 +60,30 @@ export interface DashboardStats {
   transactionCount: number;
   avgTransaction: number;
 }
+
+export interface MerchantCategory {
+  id: string;
+  user_id: string;
+  merchant: string;
+  category_id: string | null;
+  category_name: string;
+  source: "user" | "ai" | "keyword";
+  confidence: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TransactionCategoryOverride {
+  id: string;
+  transaction_id: string;
+  user_id: string;
+  category_id: string | null;
+  category_name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TransactionWithCategory extends Transaction {
+  effective_category: string | null;
+  category_source: "override" | "merchant" | "default" | null;
+}

@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { get } from "@vercel/blob";
+import { generateText, Output } from "ai";
+import { bedrock } from "@ai-sdk/amazon-bedrock";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getDescopeUserId } from "@/lib/supabase/auth";
 import Papa from "papaparse";
-import { categorizeTransaction } from "@/lib/categorize";
+import { extractMerchant, saveMerchantCategory } from "@/lib/categorization-service";
 
 interface ParsedTransaction {
   date: string;
@@ -117,6 +120,147 @@ function parseCSV(content: string): ParsedTransaction[] {
   return transactions;
 }
 
+const categorizationSchema = z.object({
+  category: z.string().describe("The category name from the available categories"),
+  confidence: z.number().min(0).max(1).describe("Confidence score between 0 and 1"),
+});
+
+/**
+ * Categorize a transaction using AI
+ */
+async function categorizeWithAI(
+  merchant: string,
+  description: string,
+  availableCategories: string[],
+): Promise<{ category: string; confidence: number }> {
+  try {
+    const categoryList = availableCategories.length > 0
+      ? availableCategories.join(", ")
+      : "Groceries, Dining, Transportation, Shopping, Entertainment, Bills & Utilities, Healthcare, Travel, Other";
+    console.log("running haiku!")
+    const result = await generateText({
+      model: bedrock("us.anthropic.claude-haiku-4-5-20251001-v1:0"),
+      prompt: `Categorize this financial transaction into the most appropriate category.
+
+Merchant: ${merchant}
+Description: ${description}
+
+Available categories: ${categoryList}
+
+Analyze the merchant name and description to determine which category fits best. Choose from the available categories listed above. If none fit well, choose "Other".
+
+Provide a confidence score between 0 and 1 based on how certain you are:
+- 0.9-1.0: Very confident (clear match)
+- 0.7-0.9: Confident (good match)
+- 0.5-0.7: Somewhat confident (reasonable match)
+- 0.3-0.5: Uncertain (weak match)
+- 0.0-0.3: Very uncertain (fallback to Other)`,
+      output: Output.object({ schema: categorizationSchema }),
+    });
+    
+    console.log({
+      category: result.output.category,
+      confidence: result.output.confidence,
+    })
+    return {
+      category: result.output.category,
+      confidence: result.output.confidence,
+    };
+  } catch (error) {
+    console.error("AI categorization failed:", error);
+    return {
+      category: "Other",
+      confidence: 0.0,
+    };
+  }
+}
+
+/**
+ * Trigger background categorization for newly uploaded transactions
+ * This runs asynchronously and doesn't block the upload response
+ */
+async function triggerBackgroundCategorization(
+  transactions: any[],
+  userId: string,
+  supabase: any,
+  categories: Array<{ id: string; name: string }>,
+): Promise<void> {
+  console.log("categorizing in background!")
+  // Get unique merchants from transactions
+  const uniqueMerchants = new Map<string, { merchant: string; description: string }>();
+
+  for (const transaction of transactions) {
+    if (transaction.merchant && !uniqueMerchants.has(transaction.merchant)) {
+      uniqueMerchants.set(transaction.merchant, {
+        merchant: transaction.merchant,
+        description: transaction.description,
+      });
+    }
+  }
+
+  // Process merchants in batches
+  const BATCH_SIZE = 5;
+  const merchantEntries = Array.from(uniqueMerchants.values());
+  console.log (merchantEntries)
+
+  for (let i = 0; i < merchantEntries.length; i += BATCH_SIZE) {
+    const batch = merchantEntries.slice(i, i + BATCH_SIZE);
+
+    // Process batch in parallel
+    await Promise.all(
+      batch.map(async ({ merchant, description }) => {
+        try {
+          console.log(merchant)
+          // Check if merchant already has a category
+          const { data: existing } = await supabase
+            .from("merchant_categories")
+            .select("id")
+            .eq("user_id", userId)
+            .eq("merchant", merchant)
+            .single();
+          console.log(existing)
+          // Skip if already categorized
+          if (existing) return;
+          console.log("new!")
+
+          // Categorize with AI
+          const result = await categorizeWithAI(
+            merchant,
+            description,
+            categories.map((c) => c.name),
+          );
+
+          console.log(result.category)
+          if (!result.category) return;
+
+          // Find matching category ID
+          const matchingCategory = categories.find(
+            (cat) => cat.name.toLowerCase() === result.category.toLowerCase(),
+          );
+
+          // Save merchant category
+          await saveMerchantCategory(
+            userId,
+            merchant,
+            result.category,
+            matchingCategory?.id || null,
+            "ai",
+            supabase,
+            result.confidence,
+          );
+        } catch (err) {
+          console.error(`Failed to categorize merchant ${merchant}:`, err);
+        }
+      })
+    );
+
+    // Small delay between batches to avoid rate limits
+    if (i + BATCH_SIZE < merchantEntries.length) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
@@ -150,8 +294,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get categories for matching
-    const { data: categories } = await supabase.from("categories").select("*");
+    // Get user's categories for AI categorization
+    const { data: categories } = await supabase
+      .from("categories")
+      .select("id, name")
+      .eq("user_id", userId);
     const categoryList = categories || [];
 
     // Get file from blob storage
@@ -206,12 +353,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Categorize and insert transactions with user_id
+    // Extract merchant and prepare transactions for insertion
     const transactionsToInsert = transactions.map((t) => {
-      const { category, merchant } = categorizeTransaction(
-        t.description,
-        categoryList,
-      );
+      const merchant = extractMerchant(t.description);
       return {
         user_id: userId,
         statement_id: statementId,
@@ -219,15 +363,16 @@ export async function POST(request: NextRequest) {
         description: t.description,
         amount: t.amount,
         transaction_type: t.transaction_type,
-        category,
+        category: null, // Will be determined by categorization service
         merchant,
         raw_data: t,
       };
     });
 
-    const { error: insertError } = await supabase
+    const { data: insertedTransactions, error: insertError } = await supabase
       .from("transactions")
-      .insert(transactionsToInsert);
+      .insert(transactionsToInsert)
+      .select();
 
     if (insertError) {
       console.error("Insert error:", insertError);
@@ -242,6 +387,19 @@ export async function POST(request: NextRequest) {
       .from("statements")
       .update({ processed: true, row_count: transactions.length })
       .eq("id", statementId);
+
+    // Trigger background categorization for new transactions (non-blocking)
+    if (insertedTransactions && insertedTransactions.length > 0 ) {
+      // Don't await - let it run in the background
+      await triggerBackgroundCategorization(
+        insertedTransactions,
+        userId,
+        supabase,
+        categoryList,
+      ).catch((err) => {
+        console.error("Background categorization failed:", err);
+      });
+    }
 
     return NextResponse.json({
       success: true,
